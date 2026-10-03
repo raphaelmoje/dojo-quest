@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dojo Quest - Treino do Judoca</title>
+  <style>
+    :root {
+      --bg: #13171f;
+      --card: #202736;
+      --accent: #e67e22;
+      --gold: #f1c40f;
+      --blue: #2980b9;
+      --neon-select: #00e5ff;
+      --text: #ecf0f1;
+      --text-dim: #95a5a6;
+      --green: #27ae60;
+      --red: #c0392b;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 16px; }
+    .container { width: 100%; max-width: 720px; background: var(--card); border-radius: 18px; padding: 24px; box-shadow: 0 12px 30px rgba(0,0,0,0.5); transition: max-width 0.25s ease; }
+    .container.wide-mode { max-width: 980px; }
+
+    .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #2c3e50; padding-bottom: 12px; }
+    .btn-back { background: #34495e; border: none; color: white; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+    .status-text { font-weight: bold; color: var(--gold); }
+
+    /* Menu de Módulos */
+    .modules-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .mod-card { background: #2c3e50; border: 2px solid #34495e; border-radius: 12px; padding: 16px; text-align: center; cursor: pointer; transition: 0.2s; }
+    .mod-card:hover { transform: translateY(-3px); border-color: var(--accent); background: #34495e; }
+    .mod-card h3 { margin-bottom: 6px; font-size: 1.05rem; }
+    .mod-card p { font-size: 0.8rem; color: var(--text-dim); }
+
+    .phase-view { display: none; }
+    .phase-view.active { display: block; }
+    .screen-title { font-size: 1.25rem; text-align: center; margin-bottom: 18px; line-height: 1.4; }
+
+    /* Mídias */
+    .media-box { background: #111; border-radius: 12px; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 220px; max-height: 300px; margin-bottom: 16px; padding: 8px; border: 1px solid #2c3e50; }
+    .media-box img { max-height: 270px; width: auto; max-width: 100%; object-fit: contain; border-radius: 8px; }
+    
+    /* Trava de vídeo sem áudio */
+    .media-box video { max-height: 280px; width: 100%; border-radius: 8px; }
+    video::-webkit-media-controls-volume-control-container,
+    video::-webkit-media-controls-mute-button,
+    video::-webkit-media-controls-volume-slider {
+      display: none !important;
+    }
+
+    /* Opções e Botões */
+    .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+    .quiz-btn { background: #34495e; color: white; border: none; border-radius: 8px; padding: 16px 12px; font-weight: 600; cursor: pointer; font-size: 0.95rem; line-height: 1.3; }
+    .quiz-btn.correct { background: var(--green); }
+    .quiz-btn.wrong { background: var(--red); }
+
+    .feedback { text-align: center; padding: 12px; margin-top: 14px; border-radius: 8px; display: none; font-weight: bold; line-height: 1.4; }
+    .feedback.show { display: block; }
+    .btn-action { width: 100%; background: var(--blue); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 12px; }
+
+    /* Contagem */
+    .numbers-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 16px; }
+    .num-btn { background: #34495e; border: 2px solid #4a627a; border-radius: 10px; padding: 10px 4px; color: white; font-weight: bold; cursor: pointer; text-align: center; font-size: 0.95rem; }
+    .num-btn span { display: block; font-size: 0.72rem; color: var(--gold); margin-top: 4px; }
+    .num-btn:active { background: var(--blue); }
+
+    /* Faixas */
+    .belts-stack { display: flex; flex-direction: column; gap: 8px; min-height: 280px; background: #171d26; border: 2px dashed #3d495a; border-radius: 12px; padding: 12px; margin-bottom: 16px; }
+    .belts-source-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; min-height: 100px; background: #171d26; border: 2px dashed #3d495a; border-radius: 12px; padding: 12px; margin-bottom: 16px; }
+    .belt-strap { height: 38px; border-radius: 6px; display: flex; align-items: center; justify-content: center; padding: 0 16px; font-weight: bold; font-size: 0.95rem; cursor: grab; user-select: none; box-shadow: 0 2px 5px rgba(0,0,0,0.4); border-top: 1px solid rgba(255,255,255,0.25); border-bottom: 1px solid rgba(0,0,0,0.3); }
+
+    .obi-branca { background: #fdfdfd; color: #111; border: 1px solid #ccc; }
+    .obi-cinza { background: #88929e; color: #fff; text-shadow: 1px 1px 2px #000; }
+    .obi-azul-clara { background: #4ba3e3; color: #fff; text-shadow: 1px 1px 2px #000; }
+    .obi-azul-escura { background: #164e7c; color: #fff; text-shadow: 1px 1px 2px #000; }
+    .obi-amarela { background: #f5b000; color: #111; }
+    .obi-laranja { background: #e66a00; color: #fff; text-shadow: 1px 1px 2px #000; }
+    .obi-verde { background: #219653; color: #fff; text-shadow: 1px 1px 2px #000; }
+    .obi-roxa { background: #7b2cbf; color: #fff; text-shadow: 1px 1px 2px #000; }
+    .obi-marrom { background: #5c3214; color: #fff; text-shadow: 1px 1px 2px #000; }
+    .obi-preta { background: #1a1a1a; color: #fff; border: 1px solid #444; text-shadow: 1px 1px 2px #000; }
+    .obi-coral { background: repeating-linear-gradient(90deg, #c0392b, #c0392b 28px, #fff 28px, #fff 56px); color: #000; font-weight: 900; }
+    .obi-vermelha { background: #b71c1c; color: #fff; text-shadow: 1px 1px 2px #000; }
+
+    /* MÓDULO 7 - UKEMI: SELEÇÃO ULTRA NÍTIDA */
+    .ukemi-match-container {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 20px;
+      align-items: stretch;
+      margin-top: 10px;
+    }
+
+    .ukemi-interactive-image {
+      position: relative;
+      background: #171d26;
+      border: 2px solid #3d495a;
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+    }
+
+    .ukemi-interactive-image img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: fill;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .ukemi-hotspots-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: grid;
+      grid-template-rows: repeat(4, 1fr);
+    }
+
+    /* ZONAS CLICÁVEIS COM ALTO CONTRASTE */
+    .ukemi-hotspot {
+      position: relative;
+      cursor: pointer;
+      border: 4px solid transparent;
+      transition: all 0.2s ease;
+      background: rgba(0, 0, 0, 0.01);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 14px;
+    }
+
+    /* Indicador em forma de badge no canto */
+    .ukemi-hotspot::after {
+      content: '';
+      font-size: 1.4rem;
+      font-weight: bold;
+      opacity: 0;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      transform: scale(0.7);
+    }
+
+    .ukemi-hotspot:hover {
+      background: rgba(0, 229, 255, 0.12);
+      border-color: rgba(0, 229, 255, 0.5);
+    }
+
+    /* ESTADO SELECIONADO: AZUL NEON VIBRANTE + SOMBRA DUPLA + ÍCONE DE MIRA */
+    .ukemi-hotspot.selected {
+      border: 4px solid var(--neon-select) !important;
+      background: rgba(0, 229, 255, 0.22) !important;
+      box-shadow: inset 0 0 20px rgba(0, 229, 255, 0.8), 0 0 14px rgba(0, 229, 255, 0.6);
+      animation: pulseSelection 1.2s infinite alternate ease-in-out;
+    }
+
+    .ukemi-hotspot.selected::after {
+      content: '🎯';
+      opacity: 1;
+      transform: scale(1.1);
+    }
+
+    @keyframes pulseSelection {
+      from { border-color: #00e5ff; box-shadow: inset 0 0 15px rgba(0, 229, 255, 0.7); }
+      to { border-color: #ffffff; box-shadow: inset 0 0 25px rgba(0, 229, 255, 1); }
+    }
+
+    /* ESTADO ACERTADO (MATCHED): VERDE CRISTALINO COM CHECK */
+    .ukemi-hotspot.matched {
+      border: 4px solid #2ecc71 !important;
+      background: rgba(46, 204, 113, 0.26) !important;
+      box-shadow: inset 0 0 16px rgba(46, 204, 113, 0.7);
+      cursor: default;
+      animation: none;
+    }
+
+    .ukemi-hotspot.matched::after {
+      content: '✅';
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* Coluna de Nomes */
+    .ukemi-names-column {
+      display: grid;
+      grid-template-rows: repeat(4, 1fr);
+      gap: 12px;
+      height: 100%;
+    }
+
+    .ukemi-name-btn {
+      background: #2c3e50;
+      border: 3px solid #3d495a;
+      color: white;
+      padding: 12px;
+      border-radius: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      text-align: center;
+      font-size: 1.05rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+
+    .ukemi-name-btn:hover { background: #34495e; transform: translateY(-2px); }
+    
+    .ukemi-name-btn.selected { 
+      border-color: var(--neon-select); 
+      background: #224254; 
+      box-shadow: 0 0 14px rgba(0, 229, 255, 0.7); 
+      color: #00e5ff;
+    }
+
+    .ukemi-name-btn.matched { 
+      background: var(--green) !important; 
+      border-color: #2ecc71 !important; 
+      color: white !important;
+      cursor: default; 
+      transform: none; 
+      box-shadow: 0 0 10px rgba(46, 204, 113, 0.4);
+    }
+
+    .ukemi-status-dock {
+      margin-top: 16px;
+      min-height: 48px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    @media (max-width: 860px) {
+      .ukemi-match-container {
+        grid-template-columns: 1fr;
+      }
+      .ukemi-interactive-image img {
+        height: 380px;
+        object-fit: contain;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container" id="mainContainer">
+    <div class="top-bar">
+      <button class="btn-back" id="btnHome" onclick="showMenu()">⛩ Início</button>
+      <div class="status-text" id="phaseIndicator">Dojo Quest</div>
+    </div>
+
+    <!-- MENU PRINCIPAL -->
+    <div id="viewMenu" class="phase-view active">
+      <h2 class="screen-title">Escolha seu Treino de Hoje</h2>
+      <div class="modules-grid">
+        <div class="mod-card" onclick="openModule('historia')">
+          <h3>📚 1. História do Judô</h3>
+          <p>História, princípios e pontuações da luta</p>
+        </div>
+        <div class="mod-card" onclick="openModule('faixas')">
+          <h3>🎗️ 2. Ordem das faixas</h3>
+          <p>Organize a ordem vertical das 12 graduações</p>
+        </div>
+        <div class="mod-card" onclick="openModule('contagem')">
+          <h3>🔢 3. Contagem (1 a 20)</h3>
+          <p>Aprenda e pratique números em japonês</p>
+        </div>
+        <div class="mod-card" onclick="openModule('sentar')">
+          <h3>🧘 4. Formas de Sentar</h3>
+          <p>Seiza, Agura, Anza e Kyoshi no Kamae</p>
+        </div>
+        <div class="mod-card" onclick="openModule('faixavideo')">
+          <h3>🥋 5. Como amarrar a faixa</h3>
+          <p>Vídeo ensinando o passo a passo da amarração</p>
+        </div>
+        <div class="mod-card" onclick="openModule('vocabulario')">
+          <h3>🇯🇵 6. Vocabulário do Judô</h3>
+          <p>23 termos tradicionais e saudações</p>
+        </div>
+        <div class="mod-card" onclick="openModule('ukemi')">
+          <h3>🤸 7. Ukemi | quedas</h3>
+          <p>Clique direto no movimento e associe ao nome</p>
+        </div>
+        <div class="mod-card" onclick="openModule('tecnicas')">
+          <h3>🤼 8. Projeções em pé</h3>
+          <p>Golpes de Ashi, Koshi e Te-waza</p>
+        </div>
+        <div class="mod-card" onclick="openModule('newaza')" style="grid-column: span 2;">
+          <h3>🤼 9. Ne-Waza | Técnicas de solo</h3>
+          <p>Imobilizações fundamentais de controle</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUIZ GENÉRICO -->
+    <div id="viewGenericQuiz" class="phase-view">
+      <h2 class="screen-title" id="quizTitle">Pergunta</h2>
+      <div class="media-box" id="quizMediaBox" style="display:none;">
+        <img id="quizImage" src="" alt="Demonstração" style="display:none;" />
+      </div>
+      <div style="text-align:center; margin-bottom:12px; display:none;" id="audioBtnContainer">
+        <button class="btn-back" id="btnAudioPrompt" onclick="playCurrentQuizAudio()">🔊 Ouvir Pronúncia</button>
+      </div>
+      <div class="quiz-options" id="quizOptions"></div>
+      <div class="feedback" id="quizFeedback"></div>
+      <button class="btn-action" id="btnNextQuiz" style="display:none;" onclick="nextGenericQuestion()">Próxima Pergunta</button>
+    </div>
+
+    <!-- MÓDULO 7: UKEMI | QUEDAS (SELEÇÃO ULTRA NÍTIDA) -->
+    <div id="viewUkemiMatch" class="phase-view">
+      <h2 class="screen-title">🤸 7. Ukemi | Quedas</h2>
+      <p style="font-size:0.92rem; color:var(--text-dim); text-align:center; margin-bottom:12px;">
+        Toque no <strong>desenho da queda</strong> na imagem e depois no <strong>nome correto</strong> ao lado:
+      </p>
+
+      <div class="ukemi-match-container">
+        <div class="ukemi-interactive-image">
+          <img src="imagens/ukemi.jpg" alt="Quadro de Ukemis" />
+          <div class="ukemi-hotspots-layer" id="ukemiHotspotsLayer"></div>
+        </div>
+
+        <div class="ukemi-names-column" id="ukemiNamesColumn"></div>
+      </div>
+
+      <div class="ukemi-status-dock">
+        <div class="feedback" id="ukemiMatchFeedback" style="margin-top:0;"></div>
+        <button class="btn-action" id="btnResetUkemi" style="display:none; max-width:240px; margin-top:8px;" onclick="initUkemiMatch()">Jogar Novamente</button>
+      </div>
+    </div>
+
+    <!-- VÍDEO AMARRAR FAIXA (ÁUDIO BLOQUEADO) -->
+    <div id="viewFaixaVideo" class="phase-view">
+      <h2 class="screen-title">Como Amarrar a Faixa (Obi)</h2>
+      <div class="media-box">
+        <video id="videoFaixa" controls muted autoplay playsinline disableRemotePlayback controlsList="nodownload nofullscreen noremoteplayback">
+          <source src="videos/amarrar_faixa.mp4" type="video/mp4">
+          O arquivo videos/amarrar_faixa.mp4 não foi encontrado.
+        </video>
+      </div>
+      <p style="text-align:center; font-size:0.9rem; color:var(--text-dim); margin-top:8px;">
+        Treine com o vídeo pausando até conseguir dar o nó correto sozinho!
+      </p>
+    </div>
+
+    <!-- FAIXAS (DRAG & DROP VERTICAL) -->
+    <div id="viewFaixas" class="phase-view">
+      <h2 class="screen-title">Empilhe as faixas na ordem certa (de cima para baixo)!</h2>
+      <p style="font-size:0.85rem; color:var(--text-dim); text-align:center; margin-bottom:8px;">
+        1º Faixa Branca no topo até a 12º Faixa Vermelha na base:
+      </p>
+      
+      <div style="font-weight:bold; margin-bottom: 6px; color:var(--gold);">🥋 Pilha da Graduação (Ordem Correta):</div>
+      <div class="belts-stack" id="beltDropTarget" ondragover="allowDrop(event)" ondrop="handleDrop(event)"></div>
+
+      <div style="font-weight:bold; margin: 12px 0 6px 0;">Faixas Disponíveis (Arraste para cima):</div>
+      <div class="belts-source-grid" id="beltSource" ondragover="allowDrop(event)" ondrop="handleDrop(event)"></div>
+
+      <button class="btn-action" onclick="checkBeltOrder()">Verificar Ordem</button>
+      <div class="feedback" id="beltFeedback"></div>
+    </div>
+
+    <!-- CONTAGEM -->
+    <div id="viewContagem" class="phase-view">
+      <h2 class="screen-title">Contagem Japonesa (1 a 20)</h2>
+      <div style="display:flex; justify-content:center; gap:8px; margin-bottom:14px;">
+        <button class="btn-back" onclick="setCountMode('estudo')">1. Painel de Escuta</button>
+        <button class="btn-back" onclick="setCountMode('quiz')">2. Desafio Auditivo</button>
+      </div>
+
+      <div id="countStudyPanel">
+        <div class="numbers-grid" id="numbersContainer"></div>
+      </div>
+
+      <div id="countQuizPanel" style="display:none; text-align:center;">
+        <p style="margin-bottom: 12px;">Clique no alto-falante, escute com atenção e escolha a opção:</p>
+        <button class="btn-action" style="max-width:220px; margin: 0 auto 16px auto;" onclick="playCurrentCountAudio()">🔊 Ouvir Número</button>
+        <div class="quiz-options" id="countQuizOptions"></div>
+        <div class="feedback" id="countFeedback"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const audioPlayer = new Audio();
+    function playLocalAudio(audioKey) {
+      if (!audioKey) return;
+      audioPlayer.pause();
+      audioPlayer.currentTime = 0;
+      audioPlayer.src = `audios/${audioKey}.mp3`;
+      audioPlayer.playbackRate = 0.70;
+      audioPlayer.play().catch(e => console.log("Áudio pendente:", audioKey));
+    }
+
+    const vid = document.getElementById('videoFaixa');
+    if (vid) {
+      vid.volume = 0;
+      vid.muted = true;
+      vid.addEventListener('volumechange', () => {
+        if (!vid.muted || vid.volume > 0) {
+          vid.muted = true;
+          vid.volume = 0;
+        }
+      });
+    }
+
+    function shuffleArray(arr) {
+      const array = [...arr];
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    const DATA = {
+      historia: [
+        { q: "Quem foi o criador do Judô?", options: ["Jigoro Kano", "Morihei Ueshiba", "Gichin Funakoshi", "Mitsuyo Maeda"], ans: "Jigoro Kano", tip: "Mestre Jigoro Kano fundou o Judô para aprimorar corpo, mente e moral." },
+        { q: "Em qual ano e país o Judô foi fundado?", options: ["1882 no Japão", "1900 na China", "1850 na Coreia", "1920 no Japão"], ans: "1882 no Japão", tip: "Foi fundado no templo Eisho-ji / Instituto Kodokan em Tóquio no ano de 1882." },
+        { q: "Por que o Judô foi criado por Jigoro Kano?", options: ["Para educar, formar cidadãos melhores e unir corpo e mente", "Apenas para vencer brigas de rua", "Para formar soldados imbatíveis", "Para substituir as outras artes marciais"], ans: "Para educar, formar cidadãos melhores e unir corpo e mente", tip: "O lema 'Jita Kyoei' prega o progresso individual para o benefício de todos." },
+        { q: "Qual pontuação encerra o combate de imediato (ponto perfeito)?", options: ["Ippon", "Waza-ri", "Shido", "Hansoku-make"], ans: "Ippon", tip: "O Ippon exige projeção veloz com costas completas no solo, ou 20 segundos de imobilização." },
+        { q: "Quantos Waza-ri são necessários para finalizar a luta?", options: ["2 Waza-ri (Waza-ri Awasete Ippon)", "3 Waza-ri", "1 Waza-ri", "4 Waza-ri"], ans: "2 Waza-ri (Waza-ri Awasete Ippon)", tip: "Dois Waza-ri somam um Ippon completo!" },
+        { q: "Quantos Shidos (faltas) causam a desclassificação por Hansoku-make?", options: ["3 Shidos", "2 Shidos", "1 Shido", "5 Shidos"], ans: "3 Shidos", tip: "Ao acumular 3 Shidos, o atleta recebe Hansoku-make e a vitória vai para o oponente." },
+        { q: "Qual destas atitudes NÃO é permitida e causa advertência (Shido)?", options: ["Sair da área ou evitar a pegada propositalmente", "Aplicar um golpe perfeito de costas", "Amarrar a faixa quando o árbitro autoriza", "Fazer a reverência com respeito"], ans: "Sair da área ou evitar a pegada propositalmente", tip: "Passividade e fuga da área de luta são faltas clássicas de Shido." }
+      ],
+
+      sentar: [
+        { q: "Identifique esta postura formal sentada sobre os joelhos:", img: "imagens/seiza.png", ans: "Seiza", options: ["Seiza", "Agura", "Anza", "Kyoshi no Kamae"], tip: "Seiza é a postura formal ajoelhada com coluna reta." },
+        { q: "Identifique esta forma de sentar com pernas cruzadas:", img: "imagens/agura.png", ans: "Agura", options: ["Agura", "Seiza", "Kyoshi no Kamae", "Anza"], tip: "Agura é a forma comum de pernas cruzadas." },
+        { q: "Identifique esta postura tradicional de repouso:", img: "imagens/anza.png", ans: "Anza", options: ["Anza", "Seiza", "Kyoshi no Kamae", "Agura"], tip: "Anza é a posição sentada de repouso com pernas recolhidas." },
+        { q: "Identifique a postura com um dos joelhos levantados:", img: "imagens/kyoshi no kamae.png", ans: "Kyoshi no Kamae", options: ["Kyoshi no Kamae", "Seiza", "Agura", "Anza"], tip: "Kyoshi no Kamae é a postura ativa com um joelho no tatame e o outro em pé." }
+      ],
+
+      vocabulario: [
+        { q: "Qual o significado da palavra:", term: "Sensei", audio: "sensei", ans: "Professor / Mestre", options: ["Professor / Mestre", "Aluno veterano", "Adversário", "Juiz"] },
+        { q: "Qual o significado da palavra:", term: "Hajime", audio: "hajime", ans: "Começar / Iniciar a luta", options: ["Começar / Iniciar a luta", "Parar a luta", "Muito obrigado", "Meditar"] },
+        { q: "Qual o significado da palavra:", term: "Mate", audio: "mate", ans: "Parar / Esperar", options: ["Parar / Esperar", "Começar", "Até logo", "Luta livre"] },
+        { q: "Qual o significado da palavra:", term: "Senpai", audio: "senpai", ans: "Aluno mais graduado / Veterano", options: ["Aluno mais graduado / Veterano", "Professor", "Novato", "Quem cai"] },
+        { q: "Qual o significado da palavra:", term: "Kohai", audio: "kohai", ans: "Aluno iniciante / Novato", options: ["Aluno iniciante / Novato", "Professor", "Veterano", "Mestre fundador"] },
+        { q: "Qual o significado da palavra:", term: "Uke", audio: "uke", ans: "Quem sofre o golpe / Sofre a queda", options: ["Quem sofre o golpe / Sofre a queda", "Quem ataca", "Árbitro", "Tatame"] },
+        { q: "Qual o significado da palavra:", term: "Tori", audio: "tori", ans: "Quem aplica o golpe", options: ["Quem aplica o golpe", "Quem cai", "Faixa", "Casaco"] },
+        { q: "Qual o significado da palavra:", term: "Judogi", audio: "judogi", ans: "O uniforme de Judô", options: ["O uniforme de Judô", "Apenas a faixa", "Apenas a calça", "Os chinelos"] },
+        { q: "Qual o significado da palavra:", term: "Wagui", audio: "wagui", ans: "O casaco do quimono", options: ["O casaco do quimono", "A calça", "A faixa", "A gola"] },
+        { q: "Qual o significado da palavra:", term: "Shitabaki", audio: "shitabaki", ans: "A calça do judogi", options: ["A calça do judogi", "O casaco", "O chinelo", "A manga"] },
+        { q: "Qual o significado da palavra:", term: "Obi", audio: "obi", ans: "A faixa", options: ["A faixa", "O casaco", "A calça", "A gola"] },
+        { q: "Qual o significado da palavra:", term: "Zori", audio: "zori", ans: "Chinelos para fora do tatame", options: ["Chinelos para fora do tatame", "Meias", "Faixa", "Protetor"] },
+        { q: "Qual o significado da palavra:", term: "Dojo", audio: "dojo", ans: "Local onde se treina e estuda Judô", options: ["Local onde se treina e estuda Judô", "O ginásio de futebol", "O uniforme", "O ringue"] },
+        { q: "Qual o significado da palavra:", term: "Randori", audio: "randori", ans: "Treino livre de combate", options: ["Treino livre de combate", "Entrada parada", "Aquecimento", "Queda para trás"] },
+        { q: "Qual o significado da palavra:", term: "Uchikomi", audio: "uchikomi", ans: "Entrada repetitiva de golpes", options: ["Entrada repetitiva de golpes", "Luta final", "Meditação", "Saudação"] },
+        { q: "Qual o significado da palavra:", term: "Sorêmade", audio: "soremade", ans: "Fim do combate ou treino", options: ["Fim do combate ou treino", "Começo da luta", "Atenção", "Cuidado"] },
+        { q: "Qual o significado da palavra:", term: "Ashi", audio: "ashi", ans: "Pé ou perna", options: ["Pé ou perna", "Mão", "Quadril", "Cabeça"] },
+        { q: "Qual o significado da palavra:", term: "Te", audio: "te", ans: "Mão ou braço", options: ["Mão ou braço", "Perna", "Ombro", "Tronco"] },
+        { q: "Qual o significado da palavra:", term: "Eri", audio: "eri", ans: "Gola do judogi", options: ["Gola do judogi", "Manga", "Faixa", "Bainha"] },
+        { q: "Qual o significado da palavra:", term: "Sode", audio: "sode", ans: "Manga do judogi", options: ["Manga do judogi", "Gola", "Cinto", "Joelheira"] },
+        { q: "Qual o significado da palavra:", term: "Mokuso", audio: "mokuso", ans: "Meditação silenciosa e concentração", options: ["Meditação silenciosa e concentração", "Grito de vitória", "Aquecimento", "Saudação de pé"] },
+        { q: "Qual o significado da palavra:", term: "Arigatô Gozaimasu", audio: "arigato", ans: "Muito obrigado (formal)", options: ["Muito obrigado (formal)", "Por favor", "Até amanhã", "Com licença"] },
+        { q: "Qual o significado da palavra:", term: "Sayonara", audio: "sayonara", ans: "Até logo / Tchau", options: ["Até logo / Tchau", "Bom dia", "Começar", "Parar"] }
+      ],
+
+      tecnicas: [
+        { q: "Identifique este golpe de perna (Ashi-waza):", img: "imagens/o-soto-gari.gif", audio: "o-soto-gari", ans: "O-soto-gari", options: ["O-soto-gari", "Ippon Seoi-nage", "O-goshi", "Tai-otoshi"] },
+        { q: "Identifique este golpe de perna (Ashi-waza):", img: "imagens/de-ashi-barai.gif", audio: "de-ashi-barai", ans: "De-ashi-barai", options: ["De-ashi-barai", "O-soto-guruma", "Harai-goshi", "O-goshi"] },
+        { q: "Identifique este golpe de perna por dentro (Ashi-waza):", img: "imagens/o-uchi-gari.gif", audio: "o-uchi-gari", ans: "O-uchi-gari", options: ["O-uchi-gari", "Ko-uchi-gari", "O-soto-gari", "O-goshi"] },
+        { q: "Identifique este golpe de perna (Ashi-waza):", img: "imagens/ko-uchi-gari.gif", audio: "ko-uchi-gari", ans: "Ko-uchi-gari", options: ["Ko-uchi-gari", "O-uchi-gari", "De-ashi-barai", "Harai-goshi"] },
+        { q: "Identifique este golpe de perna (Ashi-waza):", img: "imagens/o-soto-guruma.gif", audio: "o-soto-guruma", ans: "O-soto-guruma", options: ["O-soto-guruma", "O-soto-gari", "De-ashi-barai", "Ko-uchi-gari"] },
+        { q: "Identifique esta projeção de quadril (Koshi-waza):", img: "imagens/o-goshi.gif", audio: "o-goshi", ans: "O-goshi", options: ["O-goshi", "Ko-uchi-gari", "O-uchi-gari", "Tai-otoshi"] },
+        { q: "Identifique esta projeção de quadril (Koshi-waza):", img: "imagens/harai-goshi.gif", audio: "harai-goshi", ans: "Harai-goshi", options: ["Harai-goshi", "O-goshi", "Koshi-guruma", "Tai-otoshi"] },
+        { q: "Identifique este giro de quadril envolvendo o pescoço (Koshi-waza):", img: "imagens/koshi-guruma.gif", audio: "koshi-guruma", ans: "Koshi-guruma", options: ["Koshi-guruma", "Harai-goshi", "O-goshi", "Ippon Seoi-nage"] },
+        { q: "Identifique este arremesso clássico por cima do ombro (Te-waza):", img: "imagens/ippon-seoi-nage.gif", audio: "ippon-seoi-nage", ans: "Ippon Seoi-nage", options: ["Ippon Seoi-nage", "Harai-goshi", "De-ashi-barai", "Koshi-guruma"] },
+        { q: "Identifique este golpe com barreira de perna (Te-waza):", img: "imagens/tai-otoshi.gif", audio: "tai-otoshi", ans: "Tai-otoshi", options: ["Tai-otoshi", "O-soto-gari", "Ippon Seoi-nage", "Koshi-guruma"] }
+      ],
+
+      newaza: [
+        { q: "Identifique esta imobilização segurando o pescoço e braço (em cruz):", img: "imagens/kesa-gatame.gif", audio: "kesa-gatame", ans: "Hon Kesa-gatame", options: ["Hon Kesa-gatame", "Yoko-shiho-gatame", "Kami-shiho-gatame", "Passagem de Guarda"], tip: "Hon Kesa-gatame é a clássica imobilização lateral envolvendo o pescoço." },
+        { q: "Identifique esta imobilização lateral de quatro apoios no tronco:", img: "imagens/yoko-shiho-gatame.gif", audio: "yoko-shiho-gatame", ans: "Yoko-shiho-gatame", options: ["Yoko-shiho-gatame", "Hon Kesa-gatame", "Kami-shiho-gatame", "Passagem de Guarda"], tip: "Yoko-shiho-gatame: peito com peito, segurando por baixo do pescoço e entre as pernas." },
+        { q: "Identifique esta imobilização vindo por cima da cabeça:", img: "imagens/kami-shiho-gatame.gif", audio: "kami-shiho-gatame", ans: "Kami-shiho-gatame", options: ["Kami-shiho-gatame", "Hon Kesa-gatame", "Yoko-shiho-gatame", "Passagem de Guarda"], tip: "Kami-shiho-gatame: controle por cima da cabeça segurando as duas laterais da faixa." }
+      ]
+    };
+
+    function hideAll() {
+      document.querySelectorAll('.phase-view').forEach(v => v.classList.remove('active'));
+    }
+
+    function showMenu() {
+      hideAll();
+      document.getElementById('mainContainer').classList.remove('wide-mode');
+      document.getElementById('viewMenu').classList.add('active');
+      document.getElementById('phaseIndicator').textContent = "Dojo Quest";
+    }
+
+    let activeList = [];
+    let activeIdx = 0;
+
+    function openModule(type) {
+      hideAll();
+      const container = document.getElementById('mainContainer');
+
+      if (type === 'faixas') {
+        container.classList.remove('wide-mode');
+        document.getElementById('viewFaixas').classList.add('active');
+        document.getElementById('phaseIndicator').textContent = "🎗️ 2. Ordem das faixas";
+        initBelts();
+      } else if (type === 'contagem') {
+        container.classList.remove('wide-mode');
+        document.getElementById('viewContagem').classList.add('active');
+        document.getElementById('phaseIndicator').textContent = "🔢 3. Contagem (1 a 20)";
+        buildCountGrid();
+        setCountMode('estudo');
+      } else if (type === 'faixavideo') {
+        container.classList.remove('wide-mode');
+        document.getElementById('viewFaixaVideo').classList.add('active');
+        document.getElementById('phaseIndicator').textContent = "🥋 5. Como amarrar a faixa";
+        const v = document.getElementById('videoFaixa');
+        if (v) {
+          v.currentTime = 0;
+          v.muted = true;
+          v.volume = 0;
+        }
+      } else if (type === 'ukemi') {
+        container.classList.add('wide-mode');
+        document.getElementById('viewUkemiMatch').classList.add('active');
+        document.getElementById('phaseIndicator').textContent = "🤸 7. Ukemi | quedas";
+        initUkemiMatch();
+      } else {
+        container.classList.remove('wide-mode');
+        document.getElementById('viewGenericQuiz').classList.add('active');
+        activeList = shuffleArray(DATA[type]);
+        activeIdx = 0;
+        const titulos = {
+          historia: "📚 1. História do Judô",
+          sentar: "🧘 4. Formas de Sentar",
+          vocabulario: "🇯🇵 6. Vocabulário do Judô",
+          tecnicas: "🤼 8. Projeções em pé",
+          newaza: "🤼 9. Ne-Waza | Técnicas de solo"
+        };
+        document.getElementById('phaseIndicator').textContent = titulos[type];
+        loadGenericQuestion();
+      }
+    }
+
+    function loadGenericQuestion() {
+      const item = activeList[activeIdx];
+      const qTitle = document.getElementById('quizTitle');
+      const mediaBox = document.getElementById('quizMediaBox');
+      const img = document.getElementById('quizImage');
+      const audioBtnContainer = document.getElementById('audioBtnContainer');
+      const optsBox = document.getElementById('quizOptions');
+      const fb = document.getElementById('quizFeedback');
+      const btnNext = document.getElementById('btnNextQuiz');
+
+      fb.className = 'feedback';
+      btnNext.style.display = 'none';
+      optsBox.innerHTML = '';
+
+      if (item.term) {
+        qTitle.innerHTML = `${item.q} <br><strong style="font-size:1.7rem; color:var(--gold); display:block; margin-top:8px;">${item.term}</strong>`;
+      } else {
+        qTitle.textContent = item.q;
+      }
+
+      if (item.img) {
+        img.src = item.img;
+        img.style.display = 'block';
+        mediaBox.style.display = 'flex';
+      } else {
+        img.src = '';
+        img.style.display = 'none';
+        mediaBox.style.display = 'none';
+      }
+
+      if (item.term && item.audio) {
+        audioBtnContainer.style.display = 'block';
+        playLocalAudio(item.audio);
+      } else {
+        audioBtnContainer.style.display = 'none';
+      }
+
+      const randomOptions = shuffleArray(item.options);
+
+      randomOptions.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-btn';
+        btn.textContent = opt;
+        btn.onclick = () => {
+          if (btn.textContent === item.ans) {
+            btn.classList.add('correct');
+            fb.textContent = item.tip ? `Correto! ${item.tip}` : "Ippon! Resposta perfeita!";
+            fb.className = "feedback show";
+            fb.style.color = "var(--green)";
+            if (item.audio) playLocalAudio(item.audio);
+            btnNext.style.display = 'block';
+          } else {
+            btn.classList.add('wrong');
+            fb.textContent = "Tente outra vez! Observe bem os detalhes.";
+            fb.className = "feedback show";
+            fb.style.color = "var(--red)";
+          }
+        };
+        optsBox.appendChild(btn);
+      });
+    }
+
+    function playCurrentQuizAudio() {
+      const item = activeList[activeIdx];
+      if (item && item.audio) playLocalAudio(item.audio);
+    }
+
+    function nextGenericQuestion() {
+      activeIdx++;
+      if (activeIdx < activeList.length) {
+        loadGenericQuestion();
+      } else {
+        document.getElementById('quizTitle').textContent = "Módulo Concluído com Sucesso! 🥋";
+        document.getElementById('quizMediaBox').style.display = 'none';
+        document.getElementById('audioBtnContainer').style.display = 'none';
+        document.getElementById('quizOptions').innerHTML = '';
+        document.getElementById('quizFeedback').textContent = "Excelente! Você concluiu todas as etapas deste treino.";
+        document.getElementById('quizFeedback').className = 'feedback show';
+        document.getElementById('quizFeedback').style.color = 'var(--gold)';
+        document.getElementById('btnNextQuiz').style.display = 'none';
+      }
+    }
+
+    // MÓDULO 7 - UKEMI: CLIQUE SOBRE A PRÓPRIA IMAGEM
+    const ukemiPairs = [
+      { id: 'u1', name: 'Ushiro Ukemi' },
+      { id: 'u2', name: 'Zenpo Kaiten Ukemi' },
+      { id: 'u3', name: 'Yoko Ukemi' },
+      { id: 'u4', name: 'Mae Ukemi' }
+    ];
+
+    let selectedHotspot = null;
+    let selectedNameBtn = null;
+    let matchedCount = 0;
+
+    function initUkemiMatch() {
+      const layer = document.getElementById('ukemiHotspotsLayer');
+      const namesCol = document.getElementById('ukemiNamesColumn');
+      const fb = document.getElementById('ukemiMatchFeedback');
+      const btnReset = document.getElementById('btnResetUkemi');
+
+      layer.innerHTML = '';
+      namesCol.innerHTML = '';
+      fb.className = 'feedback';
+      fb.style.display = 'none';
+      btnReset.style.display = 'none';
+      selectedHotspot = null;
+      selectedNameBtn = null;
+      matchedCount = 0;
+
+      ukemiPairs.forEach(item => {
+        const spot = document.createElement('div');
+        spot.className = 'ukemi-hotspot';
+        spot.dataset.id = item.id;
+        spot.onclick = () => selectHotspot(spot);
+        layer.appendChild(spot);
+      });
+
+      const shuffled = shuffleArray(ukemiPairs);
+      shuffled.forEach(item => {
+        const btn = document.createElement('div');
+        btn.className = 'ukemi-name-btn';
+        btn.textContent = item.name;
+        btn.dataset.id = item.id;
+        btn.onclick = () => selectName(btn);
+        namesCol.appendChild(btn);
+      });
+    }
+
+    function selectHotspot(spot) {
+      if (spot.classList.contains('matched')) return;
+      document.querySelectorAll('.ukemi-hotspot').forEach(s => s.classList.remove('selected'));
+      spot.classList.add('selected');
+      selectedHotspot = spot;
+      checkMatchAttempt();
+    }
+
+    function selectName(btn) {
+      if (btn.classList.contains('matched')) return;
+      document.querySelectorAll('.ukemi-name-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedNameBtn = btn;
+      checkMatchAttempt();
+    }
+
+    function checkMatchAttempt() {
+      if (!selectedHotspot || !selectedNameBtn) return;
+
+      const fb = document.getElementById('ukemiMatchFeedback');
+
+      if (selectedHotspot.dataset.id === selectedNameBtn.dataset.id) {
+        selectedHotspot.classList.remove('selected');
+        selectedNameBtn.classList.remove('selected');
+        selectedHotspot.classList.add('matched');
+        selectedNameBtn.classList.add('matched');
+
+        fb.textContent = `Ippon! Você associou ${selectedNameBtn.textContent} corretamente!`;
+        fb.className = 'feedback show';
+        fb.style.color = 'var(--green)';
+
+        selectedHotspot = null;
+        selectedNameBtn = null;
+        matchedCount++;
+
+        if (matchedCount === ukemiPairs.length) {
+          fb.textContent = "🏆 Parabéns! Você dominou todas as 4 quedas fundamentais do Judô!";
+          fb.style.color = 'var(--gold)';
+          document.getElementById('btnResetUkemi').style.display = 'block';
+        }
+      } else {
+        fb.textContent = "Essa não é a queda certa. Observe bem o movimento e tente outro nome!";
+        fb.className = 'feedback show';
+        fb.style.color = 'var(--red)';
+
+        setTimeout(() => {
+          if (selectedHotspot) selectedHotspot.classList.remove('selected');
+          if (selectedNameBtn) selectedNameBtn.classList.remove('selected');
+          selectedHotspot = null;
+          selectedNameBtn = null;
+        }, 600);
+      }
+    }
+
+    // FAIXAS (DRAG & DROP VERTICAL)
+    const beltList = [
+      { id: 'b1', name: 'Faixa Branca', class: 'obi-branca' },
+      { id: 'b2', name: 'Faixa Cinza', class: 'obi-cinza' },
+      { id: 'b3', name: 'Faixa Azul Clara', class: 'obi-azul-clara' },
+      { id: 'b4', name: 'Faixa Azul Escura', class: 'obi-azul-escura' },
+      { id: 'b5', name: 'Faixa Amarela', class: 'obi-amarela' },
+      { id: 'b6', name: 'Faixa Laranja', class: 'obi-laranja' },
+      { id: 'b7', name: 'Faixa Verde', class: 'obi-verde' },
+      { id: 'b8', name: 'Faixa Roxa', class: 'obi-roxa' },
+      { id: 'b9', name: 'Faixa Marrom', class: 'obi-marrom' },
+      { id: 'b10', name: 'Faixa Preta', class: 'obi-preta' },
+      { id: 'b11', name: 'Faixa Coral (Vermelha e Branca)', class: 'obi-coral' },
+      { id: 'b12', name: 'Faixa Vermelha', class: 'obi-vermelha' }
+    ];
+
+    function initBelts() {
+      const source = document.getElementById('beltSource');
+      const target = document.getElementById('beltDropTarget');
+      source.innerHTML = '';
+      target.innerHTML = '';
+      document.getElementById('beltFeedback').className = 'feedback';
+
+      const shuffled = shuffleArray(beltList);
+      shuffled.forEach(b => {
+        const el = document.createElement('div');
+        el.className = `belt-strap ${b.class}`;
+        el.textContent = b.name;
+        el.id = b.id;
+        el.draggable = true;
+        el.ondragstart = (e) => e.dataTransfer.setData('text/plain', b.id);
+        source.appendChild(el);
+      });
+    }
+
+    function allowDrop(e) { e.preventDefault(); }
+    function handleDrop(e) {
+      e.preventDefault();
+      const id = e.dataTransfer.getData('text/plain');
+      const draggedEl = document.getElementById(id);
+      let targetZone = e.target.closest('#beltDropTarget') || e.target.closest('#beltSource');
+      if (targetZone) targetZone.appendChild(draggedEl);
+    }
+
+    function checkBeltOrder() {
+      const target = document.getElementById('beltDropTarget');
+      const items = Array.from(target.children);
+      const fb = document.getElementById('beltFeedback');
+
+      if (items.length !== beltList.length) {
+        fb.textContent = "Arraste todas as 12 faixas para a coluna superior antes de verificar!";
+        fb.className = "feedback show";
+        fb.style.color = "var(--red)";
+        return;
+      }
+
+      let correct = true;
+      items.forEach((item, index) => {
+        if (item.id !== beltList[index].id) correct = false;
+      });
+
+      if (correct) {
+        fb.textContent = "Perfeito! A coluna de graduação está perfeitamente ordenada da Branca até a Vermelha! 🏆";
+        fb.className = "feedback show";
+        fb.style.color = "var(--green)";
+      } else {
+        fb.textContent = "Ainda há faixas fora da ordem na pilha. Verifique de cima para baixo!";
+        fb.className = "feedback show";
+        fb.style.color = "var(--red)";
+      }
+    }
+
+    // CONTAGEM
+    const counts = [
+      { n: 1, ja: "Ichi" }, { n: 2, ja: "Ni" }, { n: 3, ja: "San" }, { n: 4, ja: "Shi" }, { n: 5, ja: "Go" },
+      { n: 6, ja: "Roku" }, { n: 7, ja: "Shichi" }, { n: 8, ja: "Hachi" }, { n: 9, ja: "Ku" }, { n: 10, ja: "Ju" },
+      { n: 11, ja: "Ju-ichi" }, { n: 12, ja: "Ju-ni" }, { n: 13, ja: "Ju-san" }, { n: 14, ja: "Ju-shi" }, { n: 15, ja: "Ju-go" },
+      { n: 16, ja: "Ju-roku" }, { n: 17, ja: "Ju-shichi" }, { n: 18, ja: "Ju-hachi" }, { n: 19, ja: "Ju-ku" }, { n: 20, ja: "Ni-ju" }
+    ];
+    let currentQuizNum = null;
+
+    function buildCountGrid() {
+      const container = document.getElementById('numbersContainer');
+      container.innerHTML = '';
+      counts.forEach(c => {
+        const btn = document.createElement('div');
+        btn.className = 'num-btn';
+        btn.innerHTML = `${c.n} <span>${c.ja}</span>`;
+        btn.onclick = () => playLocalAudio(c.n.toString());
+        container.appendChild(btn);
+      });
+    }
+
+    function setCountMode(mode) {
+      if (mode === 'estudo') {
+        document.getElementById('countStudyPanel').style.display = 'block';
+        document.getElementById('countQuizPanel').style.display = 'none';
+      } else {
+        document.getElementById('countStudyPanel').style.display = 'none';
+        document.getElementById('countQuizPanel').style.display = 'block';
+        generateCountQuiz();
+      }
+    }
+
+    function generateCountQuiz() {
+      const rand = counts[Math.floor(Math.random() * counts.length)];
+      currentQuizNum = rand;
+      playCurrentCountAudio();
+
+      const optsContainer = document.getElementById('countQuizOptions');
+      optsContainer.innerHTML = '';
+      document.getElementById('countFeedback').className = 'feedback';
+
+      let choices = [rand];
+      while (choices.length < 4) {
+        let opt = counts[Math.floor(Math.random() * counts.length)];
+        if (!choices.find(c => c.n === opt.n)) choices.push(opt);
+      }
+      choices = shuffleArray(choices);
+
+      choices.forEach(ch => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-btn';
+        btn.textContent = `${ch.n} (${ch.ja})`;
+        btn.onclick = () => {
+          const fb = document.getElementById('countFeedback');
+          if (ch.n === currentQuizNum.n) {
+            btn.classList.add('correct');
+            fb.textContent = `Ippon! ${currentQuizNum.ja} é o número ${currentQuizNum.n}!`;
+            fb.className = 'feedback show';
+            fb.style.color = 'var(--green)';
+            setTimeout(generateCountQuiz, 1600);
+          } else {
+            btn.classList.add('wrong');
+            fb.textContent = 'Não foi esse número. Ouça o áudio novamente!';
+            fb.className = 'feedback show';
+            fb.style.color = 'var(--red)';
+          }
+        };
+        optsContainer.appendChild(btn);
+      });
+    }
+
+    function playCurrentCountAudio() {
+      if (currentQuizNum) playLocalAudio(currentQuizNum.n.toString());
+    }
+  </script>
+</body>
+</html>
