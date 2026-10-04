@@ -427,7 +427,7 @@
         bgmPlayer.play().then(() => {
           btn.textContent = "🎵 Som: Ligado";
           btn.style.color = "var(--green)";
-        }).catch(err => console.log("Aguardando permissão do navegador para áudio."));
+        }).catch(err => console.log("Aguardando permissão para tocar som."));
       } else {
         bgmPlayer.pause();
         btn.textContent = "🔇 Som: Desligado";
@@ -471,6 +471,17 @@
         [array[i], array[j]] = [array[j], array[i]];
       }
       return array;
+    }
+
+    // Pré-carregador de imagens e GIFs em segundo plano
+    function preloadModuleImages(list) {
+      if (!list) return;
+      list.forEach(item => {
+        if (item.img) {
+          const preImg = new Image();
+          preImg.src = item.img;
+        }
+      });
     }
 
     const DATA = {
@@ -523,9 +534,9 @@
         { q: "Qual o significado da palavra:", term: "Kohai", audio: "kohai", ans: "Aluno iniciante / Novato", options: ["Aluno iniciante / Novato", "Professor", "Veterano", "Mestre fundador"] },
         { q: "Qual o significado da palavra:", term: "Uke", audio: "uke", ans: "Quem sofre o golpe / Sofre a queda", options: ["Quem sofre o golpe / Sofre a queda", "Quem ataca", "Árbitro", "Tatame"] },
         { q: "Qual o significado da palavra:", term: "Tori", audio: "tori", ans: "Quem aplica o golpe", options: ["Quem aplica o golpe", "Quem cai", "Faixa", "Casaco"] },
-        { q: "Qual o significado da palavra:", term: "Judogi", audio: "judogi", ans: "O uniforme de Judô", options: ["O uniforme de Judô", "Apenas a faixa", "Apenas a calça", "Os chinelos"] },
-        { q: "Qual o significado da palavra:", term: "Wagui", audio: "wagui", ans: "O casaco do quimono", options: ["O casaco do quimono", "A calça", "A faixa", "A gola"] },
-        { q: "Qual o significado da palavra:", term: "Shitabaki", audio: "shitabaki", ans: "A calça do judogi", options: ["A calça do judogi", "O casaco", "O chinelo", "A manga"] },
+        { q: "Qual o significado da palavra:", term: "Judogi", audio: "judogi", ans: "O uniforme tradicional de Judô", options: ["O uniforme tradicional de Judô", "Apenas a faixa", "Apenas a calça", "Os chinelos"] },
+        { q: "Qual o significado da palavra:", term: "Wagui", audio: "wagui", ans: "O casaco do Judogui", options: ["O casaco do Judogui", "A calça", "A faixa", "A gola"] },
+        { q: "Qual o significado da palavra:", term: "Shitabaki", audio: "shitabaki", ans: "A calça do Judogui", options: ["A calça do Judogui", "O casaco", "O chinelo", "A manga"] },
         { q: "Qual o significado da palavra:", term: "Obi", audio: "obi", ans: "A faixa", options: ["A faixa", "O casaco", "A calça", "A gola"] },
         { q: "Qual o significado da palavra:", term: "Zori", audio: "zori", ans: "Chinelos para fora do tatame", options: ["Chinelos para fora do tatame", "Meias", "Faixa", "Protetor"] },
         { q: "Qual o significado da palavra:", term: "Dojo", audio: "dojo", ans: "Local onde se treina e estuda Judô", options: ["Local onde se treina e estuda Judô", "O ginásio de futebol", "O uniforme", "O ringue"] },
@@ -534,8 +545,8 @@
         { q: "Qual o significado da palavra:", term: "Sorêmade", audio: "soremade", ans: "Fim do combate ou treino", options: ["Fim do combate ou treino", "Começo da luta", "Atenção", "Cuidado"] },
         { q: "Qual o significado da palavra:", term: "Ashi", audio: "ashi", ans: "Pé ou perna", options: ["Pé ou perna", "Mão", "Quadril", "Cabeça"] },
         { q: "Qual o significado da palavra:", term: "Te", audio: "te", ans: "Mão ou braço", options: ["Mão ou braço", "Perna", "Ombro", "Tronco"] },
-        { q: "Qual o significado da palavra:", term: "Eri", audio: "eri", ans: "Gola do judogi", options: ["Gola do judogi", "Manga", "Faixa", "Bainha"] },
-        { q: "Qual o significado da palavra:", term: "Sode", audio: "sode", ans: "Manga do judogi", options: ["Manga do judogi", "Gola", "Cinto", "Joelheira"] },
+        { q: "Qual o significado da palavra:", term: "Eri", audio: "eri", ans: "Gola do Judogui", options: ["Gola do Judogui", "Manga", "Faixa", "Bainha"] },
+        { q: "Qual o significado da palavra:", term: "Sode", audio: "sode", ans: "Manga do Judogui", options: ["Manga do Judogui", "Gola", "Cinto", "Joelheira"] },
         { q: "Qual o significado da palavra:", term: "Mokuso", audio: "mokuso", ans: "Meditação silenciosa e concentração", options: ["Meditação silenciosa e concentração", "Grito de vitória", "Aquecimento", "Saudação de pé"] },
         { q: "Qual o significado da palavra:", term: "Arigatô Gozaimasu", audio: "arigato", ans: "Muito obrigado (formal)", options: ["Muito obrigado (formal)", "Por favor", "Até amanhã", "Com licença"] },
         { q: "Qual o significado da palavra:", term: "Sayonara", audio: "sayonara", ans: "Até logo / Tchau", options: ["Até logo / Tchau", "Bom dia", "Começar", "Parar"] }
@@ -610,6 +621,10 @@
         document.getElementById('viewGenericQuiz').classList.add('active');
         activeList = shuffleArray(DATA[type]);
         activeIdx = 0;
+        
+        // Pré-carregamento imediato na memória RAM
+        preloadModuleImages(activeList);
+
         const titulos = {
           historia: "📚 1. História do Judô",
           sentar: "🧘 4. Formas de Sentar",
@@ -642,10 +657,18 @@
         qTitle.textContent = item.q;
       }
 
+      // Limpeza imediata do frame para nunca exibir imagem do golpe anterior
       if (item.img) {
-        img.src = item.img;
-        img.style.display = 'block';
+        img.src = '';
+        img.style.display = 'none';
         mediaBox.style.display = 'flex';
+
+        const temp = new Image();
+        temp.onload = () => {
+          img.src = item.img;
+          img.style.display = 'block';
+        };
+        temp.src = item.img;
       } else {
         img.src = '';
         img.style.display = 'none';
