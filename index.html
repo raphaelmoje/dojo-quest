@@ -28,7 +28,8 @@
 
     body { 
       background-color: var(--bg);
-      background-image: linear-gradient(rgba(19, 23, 31, 0.82), rgba(19, 23, 31, 0.88)), url('imagens/dojo-fundo.jpg');
+      /* Reduzimos o escurecimento de 85% para apenas 25% a 30% */
+      background-image: linear-gradient(rgba(10, 15, 25, 0.25), rgba(10, 15, 25, 0.35)), url('imagens/dojo-fundo.jpg');
       background-size: cover;
       background-position: center;
       background-attachment: fixed;
@@ -44,13 +45,13 @@
     .container { 
       width: 100%; 
       max-width: 720px; 
-      background: var(--card); 
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(23, 29, 41, 0.92); 
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 18px; 
       padding: 20px; 
-      box-shadow: 0 12px 35px rgba(0,0,0,0.6); 
+      box-shadow: 0 16px 40px rgba(0,0,0,0.7); 
       transition: max-width 0.25s ease; 
     }
     .container.wide-mode { max-width: 980px; }
