@@ -7,7 +7,7 @@
   <style>
     :root {
       --bg: #13171f;
-      --card: rgba(32, 39, 54, 0.94);
+      --card: #1f2736;
       --accent: #e67e22;
       --gold: #f1c40f;
       --blue: #2980b9;
@@ -27,11 +27,10 @@
     }
 
     body { 
-      background-color: var(--bg);
-      /* Reduzimos o escurecimento de 85% para apenas 25% a 30% */
-      background-image: linear-gradient(rgba(10, 15, 25, 0.25), rgba(10, 15, 25, 0.35)), url('imagens/dojo-fundo.jpg');
+      background-color: #171d26;
+      background-image: url('imagens/dojo-fundo.jpg');
       background-size: cover;
-      background-position: center;
+      background-position: center center;
       background-attachment: fixed;
       background-repeat: no-repeat;
       color: var(--text); 
@@ -45,13 +44,11 @@
     .container { 
       width: 100%; 
       max-width: 720px; 
-      background: rgba(23, 29, 41, 0.92); 
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: var(--card); 
+      border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: 18px; 
       padding: 20px; 
-      box-shadow: 0 16px 40px rgba(0,0,0,0.7); 
+      box-shadow: 0 16px 45px rgba(0,0,0,0.85); 
       transition: max-width 0.25s ease; 
     }
     .container.wide-mode { max-width: 980px; }
@@ -420,7 +417,7 @@
     // Trilha sonora de fundo
     const bgmPlayer = new Audio('musicas/fundo.m4a');
     bgmPlayer.loop = true;
-    bgmPlayer.volume = 0.20; // 20% do volume para não competir com a dicção didática
+    bgmPlayer.volume = 0.20;
 
     let bgmIniciou = false;
 
@@ -438,7 +435,6 @@
       }
     }
 
-    // Reproduz suavemente no primeiro clique ou toque na tela
     function iniciarMusicaNoPrimeiroToque() {
       if (!bgmIniciou) {
         bgmPlayer.play().then(() => {
