@@ -7,7 +7,7 @@
   <style>
     :root {
       --bg: #13171f;
-      --card: #202736;
+      --card: rgba(32, 39, 54, 0.94);
       --accent: #e67e22;
       --gold: #f1c40f;
       --blue: #2980b9;
@@ -18,14 +18,65 @@
       --red: #c0392b;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 12px; }
-    .container { width: 100%; max-width: 720px; background: var(--card); border-radius: 18px; padding: 20px; box-shadow: 0 12px 30px rgba(0,0,0,0.5); transition: max-width 0.25s ease; }
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      -webkit-tap-highlight-color: transparent; 
+    }
+
+    body { 
+      background-color: var(--bg);
+      background-image: linear-gradient(rgba(19, 23, 31, 0.82), rgba(19, 23, 31, 0.88)), url('imagens/dojo-fundo.jpg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      background-repeat: no-repeat;
+      color: var(--text); 
+      min-height: 100vh; 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      padding: 12px; 
+    }
+
+    .container { 
+      width: 100%; 
+      max-width: 720px; 
+      background: var(--card); 
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px; 
+      padding: 20px; 
+      box-shadow: 0 12px 35px rgba(0,0,0,0.6); 
+      transition: max-width 0.25s ease; 
+    }
     .container.wide-mode { max-width: 980px; }
 
-    .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 2px solid #2c3e50; padding-bottom: 12px; }
-    .btn-back { background: #34495e; border: none; color: white; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 0.9rem; }
-    .status-text { font-weight: bold; color: var(--gold); font-size: 0.95rem; }
+    .top-bar { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      margin-bottom: 16px; 
+      border-bottom: 2px solid #2c3e50; 
+      padding-bottom: 12px; 
+      gap: 8px;
+    }
+    .btn-back { 
+      background: #34495e; 
+      border: 1px solid #4a627a; 
+      color: white; 
+      padding: 8px 12px; 
+      border-radius: 8px; 
+      cursor: pointer; 
+      font-weight: bold; 
+      font-size: 0.85rem; 
+      transition: background 0.2s;
+    }
+    .btn-back:hover { background: #415b76; }
+    .status-text { font-weight: bold; color: var(--gold); font-size: 0.95rem; text-align: center; flex: 1; }
 
     /* Menu de Módulos */
     .modules-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -65,7 +116,7 @@
     .num-btn span { display: block; font-size: 0.7rem; color: var(--gold); margin-top: 3px; }
     .num-btn:active { background: var(--blue); }
 
-    /* Faixas (Toque e Arrastar) */
+    /* Faixas */
     .belts-stack { display: flex; flex-direction: column; gap: 6px; min-height: 220px; background: #171d26; border: 2px dashed #3d495a; border-radius: 12px; padding: 10px; margin-bottom: 14px; }
     .belts-source-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; min-height: 100px; background: #171d26; border: 2px dashed #3d495a; border-radius: 12px; padding: 10px; margin-bottom: 14px; }
     .belt-strap { height: 38px; border-radius: 6px; display: flex; align-items: center; justify-content: center; padding: 0 10px; font-weight: bold; font-size: 0.88rem; cursor: pointer; user-select: none; box-shadow: 0 2px 4px rgba(0,0,0,0.4); border-top: 1px solid rgba(255,255,255,0.25); border-bottom: 1px solid rgba(0,0,0,0.3); }
@@ -83,7 +134,7 @@
     .obi-coral { background: repeating-linear-gradient(90deg, #c0392b, #c0392b 24px, #fff 24px, #fff 48px); color: #000; font-weight: 900; }
     .obi-vermelha { background: #b71c1c; color: #fff; text-shadow: 1px 1px 2px #000; }
 
-    /* MÓDULO 7 - UKEMI: RESPONSIVO TOTAL (PC E CELULAR) */
+    /* Módulo 7: Ukemi */
     .ukemi-match-container {
       display: grid;
       grid-template-columns: 1.25fr 1fr;
@@ -205,20 +256,10 @@
     @media (max-width: 640px) {
       .modules-grid { grid-template-columns: 1fr; }
       .mod-card[style*="grid-column"] { grid-column: span 1 !important; }
-      .ukemi-match-container {
-        grid-template-columns: 1fr;
-      }
-      .ukemi-interactive-image {
-        height: 320px;
-      }
-      .ukemi-names-column {
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: 1fr 1fr;
-        height: auto;
-      }
-      .numbers-grid {
-        grid-template-columns: repeat(4, 1fr);
-      }
+      .ukemi-match-container { grid-template-columns: 1fr; }
+      .ukemi-interactive-image { height: 320px; }
+      .ukemi-names-column { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; height: auto; }
+      .numbers-grid { grid-template-columns: repeat(4, 1fr); }
     }
   </style>
 </head>
@@ -228,6 +269,7 @@
     <div class="top-bar">
       <button class="btn-back" id="btnHome" onclick="showMenu()">⛩ Início</button>
       <div class="status-text" id="phaseIndicator">Dojo Quest</div>
+      <button class="btn-back" id="btnBgmToggle" onclick="toggleBgm()">🎵 Som: Ligado</button>
     </div>
 
     <!-- MENU PRINCIPAL -->
@@ -323,7 +365,7 @@
       </p>
     </div>
 
-    <!-- FAIXAS (COM SUPORTE A TOQUE NO CELULAR E ARRASTO NO PC) -->
+    <!-- FAIXAS -->
     <div id="viewFaixas" class="phase-view">
       <h2 class="screen-title">Organize as Faixas da 1ª (Branca) à 12ª (Vermelha)</h2>
       <p style="font-size:0.85rem; color:var(--text-dim); text-align:center; margin-bottom:8px;">
@@ -353,7 +395,7 @@
       </div>
 
       <div id="countQuizPanel" style="display:none; text-align:center;">
-        <p style="margin-bottom: 12px;">Clique no alto-falante, escute com atenção e escolha a opção:</p>
+        <p style="margin-bottom: 12px;">Clique no alto-falante, escute com atenção e escolha o número correspondente:</p>
         <button class="btn-action" style="max-width:220px; margin: 0 auto 16px auto;" onclick="playCurrentCountAudio()">🔊 Ouvir Número</button>
         <div class="quiz-options" id="countQuizOptions"></div>
         <div class="feedback" id="countFeedback"></div>
@@ -363,6 +405,7 @@
   </div>
 
   <script>
+    // Áudio dos golpes, termos e números
     const audioPlayer = new Audio();
     function playLocalAudio(audioKey) {
       if (!audioKey) return;
@@ -372,6 +415,45 @@
       audioPlayer.playbackRate = 0.75;
       audioPlayer.play().catch(e => console.log("Áudio pendente:", audioKey));
     }
+
+    // Trilha sonora de fundo
+    const bgmPlayer = new Audio('musicas/fundo.m4a');
+    bgmPlayer.loop = true;
+    bgmPlayer.volume = 0.20; // 20% do volume para não competir com a dicção didática
+
+    let bgmIniciou = false;
+
+    function toggleBgm() {
+      const btn = document.getElementById('btnBgmToggle');
+      if (bgmPlayer.paused) {
+        bgmPlayer.play().then(() => {
+          btn.textContent = "🎵 Som: Ligado";
+          btn.style.color = "var(--green)";
+        }).catch(err => console.log("Aguardando permissão do navegador para áudio."));
+      } else {
+        bgmPlayer.pause();
+        btn.textContent = "🔇 Som: Desligado";
+        btn.style.color = "var(--red)";
+      }
+    }
+
+    // Reproduz suavemente no primeiro clique ou toque na tela
+    function iniciarMusicaNoPrimeiroToque() {
+      if (!bgmIniciou) {
+        bgmPlayer.play().then(() => {
+          bgmIniciou = true;
+          const btn = document.getElementById('btnBgmToggle');
+          if (btn) {
+            btn.textContent = "🎵 Som: Ligado";
+            btn.style.color = "var(--green)";
+          }
+        }).catch(() => {});
+        document.removeEventListener('click', iniciarMusicaNoPrimeiroToque);
+        document.removeEventListener('touchstart', iniciarMusicaNoPrimeiroToque);
+      }
+    }
+    document.addEventListener('click', iniciarMusicaNoPrimeiroToque);
+    document.addEventListener('touchstart', iniciarMusicaNoPrimeiroToque);
 
     const vid = document.getElementById('videoFaixa');
     if (vid) {
@@ -425,14 +507,14 @@
           img: "imagens/kyoshi-no-kamae.jpg", 
           ans: "Kyōshi-no-kamae", 
           options: ["Kyōshi-no-kamae", "Seiza", "Agura", "Tate-hiza"], 
-          tip: "Kyōshi-no-kamae é a postura de joelho levantado para pronto combate ou equilíbrio." 
+          tip: "Kyōshi-no-kamae é a postura ativa com um joelho no chão e outro erguido para pronto combate." 
         },
         { 
           q: "Identifique esta postura tradicional com joelho erguido na vertical:", 
           img: "imagens/tate-hiza.jpg", 
           ans: "Tate-hiza", 
           options: ["Tate-hiza", "Seiza", "Agura", "Kyōshi-no-kamae"], 
-          tip: "Tate-hiza é a tradicional posição com um joelho erguido na vertical." 
+          tip: "Tate-hiza é a clássica postura marcial com um joelho erguido verticalmente." 
         }
       ],
 
@@ -626,7 +708,7 @@
       }
     }
 
-    // MÓDULO 7 - UKEMI (ALINHAMENTO SEGURO PC E CELULAR)
+    // MÓDULO 7 - UKEMI
     const ukemiPairs = [
       { id: 'u1', name: 'Ushiro Ukemi' },
       { id: 'u2', name: 'Zenpo Kaiten Ukemi' },
@@ -726,7 +808,7 @@
       }
     }
 
-    // MÓDULO 2 - FAIXAS (HÍBRIDO: ARRASTO NO PC + TOQUE NO CELULAR)
+    // MÓDULO 2 - FAIXAS (TOQUE + ARRASTO)
     const beltList = [
       { id: 'b1', name: 'Faixa Branca', class: 'obi-branca' },
       { id: 'b2', name: 'Faixa Cinza', class: 'obi-cinza' },
@@ -757,8 +839,6 @@
         el.id = b.id;
         el.draggable = true;
         el.ondragstart = (e) => e.dataTransfer.setData('text/plain', b.id);
-        
-        // Toque rápido funcional no celular:
         el.onclick = () => toggleBeltPosition(el);
         source.appendChild(el);
       });
