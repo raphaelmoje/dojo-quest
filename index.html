@@ -54,26 +54,26 @@
     }
     .container.wide-mode { max-width: 980px; }
 
-    /* Tela de abertura: formato quadrado, translúcido e sem bordas cinzas */
+    /* Tela de abertura equilibrada no meio do caminho */
     .container.intro-mode {
-      max-width: 480px;
-      min-height: 440px;
-      background-color: rgba(15, 20, 28, 0.40);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      border-radius: 24px;
-      padding: 30px 20px;
+      max-width: 360px;
+      min-height: 330px;
+      background-color: rgba(15, 20, 28, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 20px;
+      padding: 24px 16px;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       position: relative;
       overflow: hidden;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
       backdrop-filter: blur(5px);
       -webkit-backdrop-filter: blur(5px);
     }
 
-    /* Imagem do judo_simbolo.jpg sem bordas sólidas e com transparência suave */
+    /* Símbolo com tamanho contido e transparência suave */
     .container.intro-mode::before {
       content: '';
       position: absolute;
@@ -82,12 +82,12 @@
       right: 0;
       bottom: 0;
       background-image: url('imagens/judo_simbolo.jpg');
-      background-size: cover;
+      background-size: 78%;
       background-position: center center;
       background-repeat: no-repeat;
-      opacity: 0.32;
+      opacity: 0.28;
       z-index: 1;
-      border-radius: 24px;
+      border-radius: 20px;
     }
 
     #viewIntro {
@@ -98,11 +98,11 @@
     }
 
     .intro-title {
-      font-size: 2.4rem;
-      letter-spacing: 2px;
+      font-size: 1.9rem;
+      letter-spacing: 1.5px;
       color: var(--gold);
-      margin-bottom: 30px;
-      text-shadow: 0 4px 12px rgba(0, 0, 0, 0.95);
+      margin-bottom: 22px;
+      text-shadow: 0 3px 10px rgba(0, 0, 0, 0.95);
       font-weight: 900;
     }
 
@@ -110,13 +110,13 @@
       background: linear-gradient(135deg, #e67e22, #d35400);
       color: white;
       border: 2px solid #f39c12;
-      padding: 16px 48px;
-      border-radius: 14px;
-      font-size: 1.35rem;
+      padding: 13px 38px;
+      border-radius: 12px;
+      font-size: 1.2rem;
       font-weight: 800;
       letter-spacing: 1px;
       cursor: pointer;
-      box-shadow: 0 8px 24px rgba(230, 126, 34, 0.55);
+      box-shadow: 0 8px 20px rgba(230, 126, 34, 0.5);
       transition: transform 0.15s, box-shadow 0.15s;
     }
     .btn-enter-dojo:active {
@@ -339,7 +339,7 @@
     <div class="top-bar" id="topBar" style="display:none;">
       <button class="btn-back" id="btnHome" onclick="showMenu()">⛩ Início</button>
       <div class="status-text" id="phaseIndicator">Dojo Quest</div>
-      <button class="btn-back" id="btnBgmToggle" onclick="toggleBgm()">🎵 Música: Ligado</button>
+      <button class="btn-back" id="btnBgmToggle" onclick="toggleBgm()">🎵 Som: Ligado</button>
     </div>
 
     <!-- TELA DE ENTRADA -->
@@ -501,21 +501,21 @@
     let bgmIniciou = false;
 
     function enterDojo() {
-      // Remove o estilo quadrado/translúcido da intro ao entrar no jogo
+      // Remove o estilo compacto/translúcido da intro ao entrar no jogo
       const container = document.getElementById('mainContainer');
       container.classList.remove('intro-mode');
 
-      // Inicia a reprodução do áudio de fundo
+      // Inicia a música de fundo imediatamente
       bgmPlayer.play().then(() => {
         bgmIniciou = true;
         const btn = document.getElementById('btnBgmToggle');
         if (btn) {
-          btn.textContent = "🎵 Música: Ligado";
+          btn.textContent = "🎵 Som: Ligado";
           btn.style.color = "var(--green)";
         }
       }).catch(err => console.log("Erro de autoplay:", err));
 
-      // Exibe a barra superior e vai para o menu
+      // Exibe a barra superior e abre o menu de módulos
       document.getElementById('topBar').style.display = 'flex';
       showMenu();
     }
@@ -524,12 +524,12 @@
       const btn = document.getElementById('btnBgmToggle');
       if (bgmPlayer.paused) {
         bgmPlayer.play().then(() => {
-          btn.textContent = "🎵 Música: Ligado";
+          btn.textContent = "🎵 Som: Ligado";
           btn.style.color = "var(--green)";
         }).catch(err => console.log("Aguardando permissão para tocar som."));
       } else {
         bgmPlayer.pause();
-        btn.textContent = "🔇 Música: Desligado";
+        btn.textContent = "🔇 Som: Desligado";
         btn.style.color = "var(--red)";
       }
     }
