@@ -53,6 +53,42 @@
     }
     .container.wide-mode { max-width: 980px; }
 
+    /* Tela de Entrada para liberar a música */
+    #viewIntro {
+      text-align: center;
+      padding: 30px 10px;
+    }
+    .intro-logo {
+      font-size: 3.5rem;
+      margin-bottom: 12px;
+      display: block;
+    }
+    .intro-title {
+      font-size: 1.8rem;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+    .intro-subtitle {
+      font-size: 0.95rem;
+      color: var(--text-dim);
+      margin-bottom: 24px;
+    }
+    .btn-enter-dojo {
+      background: linear-gradient(135deg, #e67e22, #d35400);
+      color: white;
+      border: 2px solid #f39c12;
+      padding: 16px 32px;
+      border-radius: 14px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(230, 126, 34, 0.45);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-enter-dojo:active {
+      transform: scale(0.97);
+    }
+
     .top-bar { 
       display: flex; 
       justify-content: space-between; 
@@ -264,14 +300,24 @@
 <body>
 
   <div class="container" id="mainContainer">
-    <div class="top-bar">
+    
+    <!-- BARRA SUPERIOR (oculta na tela de boas-vindas) -->
+    <div class="top-bar" id="topBar" style="display:none;">
       <button class="btn-back" id="btnHome" onclick="showMenu()">⛩ Início</button>
       <div class="status-text" id="phaseIndicator">Dojo Quest</div>
       <button class="btn-back" id="btnBgmToggle" onclick="toggleBgm()">🎵 Som: Ligado</button>
     </div>
 
+    <!-- TELA DE ENTRADA (LIBERA O ÁUDIO IMEDIATAMENTE) -->
+    <div id="viewIntro" class="phase-view active">
+      <span class="intro-logo">⛩️</span>
+      <h1 class="intro-title">DOJO QUEST</h1>
+      <p class="intro-subtitle">Treino, Tradição e Conhecimento do Judô</p>
+      <button class="btn-enter-dojo" onclick="enterDojo()">🥋 ENTRAR NO DOJÔ</button>
+    </div>
+
     <!-- MENU PRINCIPAL -->
-    <div id="viewMenu" class="phase-view active">
+    <div id="viewMenu" class="phase-view">
       <h2 class="screen-title">Escolha seu Treino de Hoje</h2>
       <div class="modules-grid">
         <div class="mod-card" onclick="openModule('historia')">
@@ -288,7 +334,7 @@
         </div>
         <div class="mod-card" onclick="openModule('sentar')">
           <h3>🧘 4. Formas de Sentar</h3>
-          <p>Seiza, Agura, Kyōshi-no-kamae e Anzai</p>
+          <p>Seiza, Agura, Kyōshi-no-kamae e Anza</p>
         </div>
         <div class="mod-card" onclick="openModule('faixavideo')">
           <h3>🥋 5. Como amarrar a faixa</h3>
@@ -422,6 +468,22 @@
 
     let bgmIniciou = false;
 
+    function enterDojo() {
+      // Toca a música imediatamente no clique autorizado pelo navegador
+      bgmPlayer.play().then(() => {
+        bgmIniciou = true;
+        const btn = document.getElementById('btnBgmToggle');
+        if (btn) {
+          btn.textContent = "🎵 Som: Ligado";
+          btn.style.color = "var(--green)";
+        }
+      }).catch(err => console.log("Erro de autoplay:", err));
+
+      // Exibe a barra superior e o menu de módulos
+      document.getElementById('topBar').style.display = 'flex';
+      showMenu();
+    }
+
     function toggleBgm() {
       const btn = document.getElementById('btnBgmToggle');
       if (bgmPlayer.paused) {
@@ -435,23 +497,6 @@
         btn.style.color = "var(--red)";
       }
     }
-
-    function iniciarMusicaNoPrimeiroToque() {
-      if (!bgmIniciou) {
-        bgmPlayer.play().then(() => {
-          bgmIniciou = true;
-          const btn = document.getElementById('btnBgmToggle');
-          if (btn) {
-            btn.textContent = "🎵 Som: Ligado";
-            btn.style.color = "var(--green)";
-          }
-        }).catch(() => {});
-        document.removeEventListener('click', iniciarMusicaNoPrimeiroToque);
-        document.removeEventListener('touchstart', iniciarMusicaNoPrimeiroToque);
-      }
-    }
-    document.addEventListener('click', iniciarMusicaNoPrimeiroToque);
-    document.addEventListener('touchstart', iniciarMusicaNoPrimeiroToque);
 
     const vid = document.getElementById('videoFaixa');
     if (vid) {
@@ -490,29 +535,29 @@
           q: "Identifique esta postura formal sentada sobre os joelhos:", 
           img: "imagens/seiza.png", 
           ans: "Seiza", 
-          options: ["Seiza", "Agura", "Kyōshi-no-kamae", "Anzai"], 
+          options: ["Seiza", "Agura", "Kyōshi-no-kamae", "Anza"], 
           tip: "Seiza é a postura formal ajoelhada com a coluna ereta e mãos sobre as coxas." 
         },
         { 
           q: "Identifique esta forma confortável de sentar com pernas cruzadas:", 
           img: "imagens/agura.png", 
           ans: "Agura", 
-          options: ["Agura", "Seiza", "Kyōshi-no-kamae", "Anzai"], 
+          options: ["Agura", "Seiza", "Kyōshi-no-kamae", "Anza"], 
           tip: "Agura é a forma comum de sentar de pernas cruzadas à frente." 
         },
         { 
           q: "Identifique esta postura de guarda com um joelho levantado:", 
           img: "imagens/kyoshi-no-kamae.jpg", 
           ans: "Kyōshi-no-kamae", 
-          options: ["Kyōshi-no-kamae", "Seiza", "Agura", "Anzai"], 
-          tip: "Kyōshi-no-kamae é a postura ativa com um joelho no chão e outro erguido para pronto combate." 
+          options: ["Kyōshi-no-kamae", "Seiza", "Agura", "Anza"], 
+          tip: "Kyōshi-no-kamae é a postura com um joelho no chão e outro erguido para pronto combate." 
         },
         { 
-          q: "Identifique esta postura tradicional com joelho erguido na vertical:", 
-          img: "imagens/Anzai.jpg", 
-          ans: "Anzai", 
-          options: ["Anzai", "Seiza", "Agura", "Kyōshi-no-kamae"], 
-          tip: "Anzai é a postura marcial com um joelho erguido verticalmente." 
+          q: "Identifique esta postura tradicional sentado com postura ereta:", 
+          img: "imagens/tate-hiza.jpg", 
+          ans: "Anza", 
+          options: ["Anza", "Seiza", "Agura", "Kyōshi-no-kamae"], 
+          tip: "Anza é a postura sentada de repouso com as pernas recolhidas e coluna alinhada." 
         }
       ],
 
@@ -644,7 +689,6 @@
         qTitle.textContent = item.q;
       }
 
-      // Suporte direto para MP4 em loop e imagens estáticas
       if (item.img) {
         mediaBox.style.display = 'flex';
         if (item.img.endsWith('.mp4')) {
@@ -991,7 +1035,6 @@
           moduleList.forEach(item => {
             if (item.img) {
               if (item.img.endsWith('.mp4')) {
-                // Pré-carrega o vídeo em segundo plano
                 const v = document.createElement('video');
                 v.preload = 'auto';
                 v.src = item.img;
