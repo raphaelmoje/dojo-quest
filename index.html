@@ -50,46 +50,73 @@
       padding: 20px; 
       box-shadow: 0 16px 45px rgba(0,0,0,0.85); 
       transition: max-width 0.25s ease, background 0.3s ease; 
+      position: relative;
     }
     .container.wide-mode { max-width: 980px; }
 
-    /* Estilo compacto e translúcido para a tela de abertura */
+    /* Tela de abertura: formato quadrado, translúcido e sem bordas cinzas */
     .container.intro-mode {
-      max-width: 420px;
-      background-color: rgba(23, 29, 38, 0.78);
-      background-image: linear-gradient(rgba(19, 23, 31, 0.70), rgba(19, 23, 31, 0.70)), url('imagens/judo_simbolo.jpg');
-      background-size: contain;
+      max-width: 480px;
+      min-height: 440px;
+      background-color: rgba(15, 20, 28, 0.40);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 24px;
+      padding: 30px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+    }
+
+    /* Imagem do judo_simbolo.jpg sem bordas sólidas e com transparência suave */
+    .container.intro-mode::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: url('imagens/judo_simbolo.jpg');
+      background-size: cover;
       background-position: center center;
       background-repeat: no-repeat;
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 32px 20px;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.75);
+      opacity: 0.32;
+      z-index: 1;
+      border-radius: 24px;
     }
 
     #viewIntro {
+      position: relative;
+      z-index: 2;
       text-align: center;
-      padding: 10px 0;
+      width: 100%;
     }
+
     .intro-title {
-      font-size: 2rem;
-      letter-spacing: 1.5px;
+      font-size: 2.4rem;
+      letter-spacing: 2px;
       color: var(--gold);
-      margin-bottom: 24px;
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+      margin-bottom: 30px;
+      text-shadow: 0 4px 12px rgba(0, 0, 0, 0.95);
+      font-weight: 900;
     }
+
     .btn-enter-dojo {
       background: linear-gradient(135deg, #e67e22, #d35400);
       color: white;
       border: 2px solid #f39c12;
-      padding: 14px 40px;
-      border-radius: 12px;
-      font-size: 1.25rem;
+      padding: 16px 48px;
+      border-radius: 14px;
+      font-size: 1.35rem;
       font-weight: 800;
       letter-spacing: 1px;
       cursor: pointer;
-      box-shadow: 0 8px 20px rgba(230, 126, 34, 0.5);
+      box-shadow: 0 8px 24px rgba(230, 126, 34, 0.55);
       transition: transform 0.15s, box-shadow 0.15s;
     }
     .btn-enter-dojo:active {
@@ -312,7 +339,7 @@
     <div class="top-bar" id="topBar" style="display:none;">
       <button class="btn-back" id="btnHome" onclick="showMenu()">⛩ Início</button>
       <div class="status-text" id="phaseIndicator">Dojo Quest</div>
-      <button class="btn-back" id="btnBgmToggle" onclick="toggleBgm()">🎵 Som: Ligado</button>
+      <button class="btn-back" id="btnBgmToggle" onclick="toggleBgm()">🎵 Música: Ligado</button>
     </div>
 
     <!-- TELA DE ENTRADA -->
@@ -474,21 +501,21 @@
     let bgmIniciou = false;
 
     function enterDojo() {
-      // Remove a classe intro-mode para que o container volte ao tamanho do menu/jogo
+      // Remove o estilo quadrado/translúcido da intro ao entrar no jogo
       const container = document.getElementById('mainContainer');
       container.classList.remove('intro-mode');
 
-      // Toca a música imediatamente no clique autorizado pelo navegador
+      // Inicia a reprodução do áudio de fundo
       bgmPlayer.play().then(() => {
         bgmIniciou = true;
         const btn = document.getElementById('btnBgmToggle');
         if (btn) {
-          btn.textContent = "🎵 Som: Ligado";
+          btn.textContent = "🎵 Música: Ligado";
           btn.style.color = "var(--green)";
         }
       }).catch(err => console.log("Erro de autoplay:", err));
 
-      // Exibe a barra superior e o menu de módulos
+      // Exibe a barra superior e vai para o menu
       document.getElementById('topBar').style.display = 'flex';
       showMenu();
     }
@@ -497,12 +524,12 @@
       const btn = document.getElementById('btnBgmToggle');
       if (bgmPlayer.paused) {
         bgmPlayer.play().then(() => {
-          btn.textContent = "🎵 Som: Ligado";
+          btn.textContent = "🎵 Música: Ligado";
           btn.style.color = "var(--green)";
         }).catch(err => console.log("Aguardando permissão para tocar som."));
       } else {
         bgmPlayer.pause();
-        btn.textContent = "🔇 Som: Desligado";
+        btn.textContent = "🔇 Música: Desligado";
         btn.style.color = "var(--red)";
       }
     }
