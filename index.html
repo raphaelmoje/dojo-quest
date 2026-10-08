@@ -339,7 +339,7 @@
     <div class="top-bar" id="topBar" style="display:none;">
       <button class="btn-back" id="btnHome" onclick="showMenu()">⛩ Início</button>
       <div class="status-text" id="phaseIndicator">Dojo Quest</div>
-      <button class="btn-back" id="btnBgmToggle" onclick="toggleBgm()">🎵 Som: Ligado</button>
+      <button class="btn-back" id="btnBgmToggle" onclick="toggleBgm()">🎵 Música: Ligado</button>
     </div>
 
     <!-- TELA DE ENTRADA -->
@@ -510,7 +510,7 @@
         bgmIniciou = true;
         const btn = document.getElementById('btnBgmToggle');
         if (btn) {
-          btn.textContent = "🎵 Som: Ligado";
+          btn.textContent = "🎵 Música: Ligado";
           btn.style.color = "var(--green)";
         }
       }).catch(err => console.log("Erro de autoplay:", err));
@@ -524,12 +524,12 @@
       const btn = document.getElementById('btnBgmToggle');
       if (bgmPlayer.paused) {
         bgmPlayer.play().then(() => {
-          btn.textContent = "🎵 Som: Ligado";
+          btn.textContent = "🎵 Música: Ligado";
           btn.style.color = "var(--green)";
-        }).catch(err => console.log("Aguardando permissão para tocar som."));
+        }).catch(err => console.log("Aguardando permissão para tocar Música."));
       } else {
         bgmPlayer.pause();
-        btn.textContent = "🔇 Som: Desligado";
+        btn.textContent = "🔇 Música: Desligado";
         btn.style.color = "var(--red)";
       }
     }
@@ -561,7 +561,7 @@
         { q: "Em qual ano e país o Judô foi fundado?", options: ["1882 no Japão", "1900 na China", "1850 na Coreia", "1920 no Japão"], ans: "1882 no Japão", tip: "Foi fundado no templo Eisho-ji / Instituto Kodokan em Tóquio no ano de 1882." },
         { q: "Por que o Judô foi criado por Jigoro Kano?", options: ["Para educar, formar cidadãos melhores e unir corpo e mente", "Apenas para vencer brigas de rua", "Para formar soldados imbatíveis", "Para substituir as outras artes marciais"], ans: "Para educar, formar cidadãos melhores e unir corpo e mente", tip: "O lema 'Jita Kyoei' prega o progresso individual para o benefício de todos." },
         { q: "Qual pontuação encerra o combate de imediato (ponto perfeito)?", options: ["Ippon", "Waza-ri", "Shido", "Hansoku-make"], ans: "Ippon", tip: "O Ippon exige projeção veloz com costas completas no solo, ou 20 segundos de imobilização." },
-        { q: "Quantos Waza-ri são necessários para finalizar a luta?", options: ["2 Waza-ri (Waza-ri Awasete Ippon)", "3 Waza-ri", "1 Waza-ri", "4 Waza-ri"], ans: "2 Waza-ri (Waza-ri Awasete Ippon)", tip: "Dois Waza-ri somam um Ippon completo!" },
+        { q: "Quantos Waza-ri são necessários para finalizar a luta?", options: ["2 Waza-ri", "3 Waza-ri", "1 Waza-ri", "4 Waza-ri"], ans: "2 Waza-ri", tip: "Dois Waza-ri somam um Ippon completo!" },
         { q: "Quantos Shidos (faltas) causam a desclassificação por Hansoku-make?", options: ["3 Shidos", "2 Shidos", "1 Shido", "5 Shidos"], ans: "3 Shidos", tip: "Ao acumular 3 Shidos, o atleta recebe Hansoku-make e a vitória vai para o oponente." },
         { q: "Qual destas atitudes NÃO é permitida e causa advertência (Shido)?", options: ["Sair da área ou evitar a pegada propositalmente", "Aplicar um golpe perfeito de costas", "Amarrar a faixa quando o árbitro autoriza", "Fazer a reverência com respeito"], ans: "Sair da área ou evitar a pegada propositalmente", tip: "Passividade e fuga da área de luta são faltas clássicas de Shido." }
       ],
