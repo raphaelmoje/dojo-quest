@@ -7,13 +7,15 @@
   <style>
     :root {
       --bg: #13171f;
-      --card: #1f2736;
-      --accent: #e67e22;
-      --gold: #f1c40f;
+      --card: rgba(255, 255, 255, 0.94);
+      --japan-red: #c0392b;
+      --japan-red-dark: #96281b;
+      --accent: #c0392b;
+      --gold: #d35400;
       --blue: #2980b9;
-      --neon-select: #00e5ff;
-      --text: #ecf0f1;
-      --text-dim: #95a5a6;
+      --neon-select: #c0392b;
+      --text: #2c3e50;
+      --text-dim: #576574;
       --green: #27ae60;
       --red: #c0392b;
     }
@@ -45,12 +47,13 @@
       width: 100%; 
       max-width: 720px; 
       background: var(--card); 
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      border: 2px solid rgba(192, 57, 43, 0.35);
       border-radius: 18px; 
       padding: 20px; 
-      box-shadow: 0 16px 45px rgba(0,0,0,0.85); 
+      box-shadow: 0 16px 45px rgba(0, 0, 0, 0.70); 
       transition: max-width 0.25s ease, background 0.3s ease; 
       position: relative;
+      color: var(--text);
     }
     .container.wide-mode { max-width: 980px; }
 
@@ -100,7 +103,7 @@
     .intro-title {
       font-size: 1.9rem;
       letter-spacing: 1.5px;
-      color: var(--gold);
+      color: #f1c40f;
       margin-bottom: 22px;
       text-shadow: 0 3px 10px rgba(0, 0, 0, 0.95);
       font-weight: 900;
@@ -123,42 +126,94 @@
       transform: scale(0.96);
     }
 
+    /* Barra Superior com visual branco e vermelho */
     .top-bar { 
       display: flex; 
       justify-content: space-between; 
       align-items: center; 
       margin-bottom: 16px; 
-      border-bottom: 2px solid #2c3e50; 
+      border-bottom: 2px solid rgba(192, 57, 43, 0.25); 
       padding-bottom: 12px; 
       gap: 8px;
     }
     .btn-back { 
-      background: #34495e; 
-      border: 1px solid #4a627a; 
-      color: white; 
+      background: #f1f2f6; 
+      border: 1px solid #dcdde1; 
+      color: var(--japan-red); 
       padding: 8px 12px; 
       border-radius: 8px; 
       cursor: pointer; 
       font-weight: bold; 
       font-size: 0.85rem; 
-      transition: background 0.2s;
+      transition: background 0.2s, color 0.2s;
     }
-    .btn-back:hover { background: #415b76; }
-    .status-text { font-weight: bold; color: var(--gold); font-size: 0.95rem; text-align: center; flex: 1; }
+    .btn-back:hover { 
+      background: var(--japan-red); 
+      color: white; 
+    }
+    .status-text { 
+      font-weight: 900; 
+      color: var(--japan-red); 
+      font-size: 1.15rem; 
+      text-align: center; 
+      flex: 1; 
+      letter-spacing: 1px;
+    }
 
-    /* Menu de Módulos */
+    /* Menu de Módulos (Estilo Branco e Carmesim) */
     .modules-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .mod-card { background: #2c3e50; border: 2px solid #34495e; border-radius: 12px; padding: 14px 10px; text-align: center; cursor: pointer; transition: 0.2s; }
-    .mod-card:hover { transform: translateY(-2px); border-color: var(--accent); background: #34495e; }
-    .mod-card h3 { margin-bottom: 4px; font-size: 0.95rem; }
-    .mod-card p { font-size: 0.75rem; color: var(--text-dim); }
+    .mod-card { 
+      background: #ffffff; 
+      border: 2px solid #e1e2e6; 
+      border-radius: 12px; 
+      padding: 14px 10px; 
+      text-align: center; 
+      cursor: pointer; 
+      transition: 0.2s; 
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+    .mod-card:hover { 
+      transform: translateY(-2px); 
+      border-color: var(--japan-red); 
+      background: #fffafa; 
+      box-shadow: 0 6px 14px rgba(192, 57, 43, 0.18);
+    }
+    .mod-card h3 { 
+      margin-bottom: 4px; 
+      font-size: 0.95rem; 
+      color: var(--japan-red); 
+      font-weight: bold;
+    }
+    .mod-card p { 
+      font-size: 0.75rem; 
+      color: var(--text-dim); 
+    }
 
     .phase-view { display: none; }
     .phase-view.active { display: block; }
-    .screen-title { font-size: 1.15rem; text-align: center; margin-bottom: 14px; line-height: 1.4; }
+    .screen-title { 
+      font-size: 1.25rem; 
+      text-align: center; 
+      margin-bottom: 14px; 
+      line-height: 1.4; 
+      color: var(--japan-red);
+      font-weight: 800;
+    }
 
     /* Mídias */
-    .media-box { background: #111; border-radius: 12px; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 200px; max-height: 280px; margin-bottom: 14px; padding: 8px; border: 1px solid #2c3e50; }
+    .media-box { 
+      background: #0f141c; 
+      border-radius: 12px; 
+      overflow: hidden; 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      min-height: 200px; 
+      max-height: 280px; 
+      margin-bottom: 14px; 
+      padding: 8px; 
+      border: 2px solid rgba(192, 57, 43, 0.25); 
+    }
     .media-box img { max-height: 250px; width: auto; max-width: 100%; object-fit: contain; border-radius: 8px; }
     
     .media-box video { max-height: 260px; width: auto; max-width: 100%; object-fit: contain; border-radius: 8px; }
@@ -168,26 +223,81 @@
       display: none !important;
     }
 
-    /* Opções e Botões */
+    /* Opções e Botões de Quiz */
     .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
-    .quiz-btn { background: #34495e; color: white; border: none; border-radius: 8px; padding: 14px 8px; font-weight: 600; cursor: pointer; font-size: 0.95rem; line-height: 1.3; }
-    .quiz-btn.correct { background: var(--green); }
-    .quiz-btn.wrong { background: var(--red); }
+    .quiz-btn { 
+      background: #ffffff; 
+      color: var(--text); 
+      border: 2px solid #dcdde1; 
+      border-radius: 8px; 
+      padding: 14px 8px; 
+      font-weight: 700; 
+      cursor: pointer; 
+      font-size: 0.95rem; 
+      line-height: 1.3; 
+      transition: all 0.2s;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+    .quiz-btn:hover {
+      border-color: var(--japan-red);
+      color: var(--japan-red);
+      background: #fff8f7;
+    }
+    .quiz-btn.correct { 
+      background: var(--green) !important; 
+      color: white !important; 
+      border-color: #219653 !important; 
+    }
+    .quiz-btn.wrong { 
+      background: var(--red) !important; 
+      color: white !important; 
+      border-color: #96281b !important; 
+    }
 
     .feedback { text-align: center; padding: 12px; margin-top: 14px; border-radius: 8px; display: none; font-weight: bold; line-height: 1.4; font-size: 0.95rem; }
     .feedback.show { display: block; }
-    .btn-action { width: 100%; background: var(--blue); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 12px; font-size: 1rem; }
+    .btn-action { 
+      width: 100%; 
+      background: var(--japan-red); 
+      color: white; 
+      border: none; 
+      padding: 12px; 
+      border-radius: 8px; 
+      font-weight: bold; 
+      cursor: pointer; 
+      margin-top: 12px; 
+      font-size: 1rem; 
+      box-shadow: 0 4px 12px rgba(192, 57, 43, 0.35);
+      transition: background 0.2s;
+    }
+    .btn-action:hover {
+      background: var(--japan-red-dark);
+    }
 
     /* Contagem */
     .numbers-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 16px; }
-    .num-btn { background: #34495e; border: 2px solid #4a627a; border-radius: 10px; padding: 10px 2px; color: white; font-weight: bold; cursor: pointer; text-align: center; font-size: 0.95rem; }
-    .num-btn span { display: block; font-size: 0.7rem; color: var(--gold); margin-top: 3px; }
-    .num-btn:active { background: var(--blue); }
+    .num-btn { 
+      background: #ffffff; 
+      border: 2px solid #dcdde1; 
+      border-radius: 10px; 
+      padding: 10px 2px; 
+      color: var(--japan-red); 
+      font-weight: bold; 
+      cursor: pointer; 
+      text-align: center; 
+      font-size: 0.95rem; 
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+      transition: 0.15s;
+    }
+    .num-btn span { display: block; font-size: 0.7rem; color: var(--text-dim); margin-top: 3px; }
+    .num-btn:hover { border-color: var(--japan-red); background: #fff5f5; }
+    .num-btn:active { background: var(--japan-red); color: white; }
+    .num-btn:active span { color: white; }
 
     /* Faixas */
-    .belts-stack { display: flex; flex-direction: column; gap: 6px; min-height: 220px; background: #171d26; border: 2px dashed #3d495a; border-radius: 12px; padding: 10px; margin-bottom: 14px; }
-    .belts-source-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; min-height: 100px; background: #171d26; border: 2px dashed #3d495a; border-radius: 12px; padding: 10px; margin-bottom: 14px; }
-    .belt-strap { height: 38px; border-radius: 6px; display: flex; align-items: center; justify-content: center; padding: 0 10px; font-weight: bold; font-size: 0.88rem; cursor: pointer; user-select: none; box-shadow: 0 2px 4px rgba(0,0,0,0.4); border-top: 1px solid rgba(255,255,255,0.25); border-bottom: 1px solid rgba(0,0,0,0.3); }
+    .belts-stack { display: flex; flex-direction: column; gap: 6px; min-height: 220px; background: #f8f9fa; border: 2px dashed #bdc3c7; border-radius: 12px; padding: 10px; margin-bottom: 14px; }
+    .belts-source-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; min-height: 100px; background: #f8f9fa; border: 2px dashed #bdc3c7; border-radius: 12px; padding: 10px; margin-bottom: 14px; }
+    .belt-strap { height: 38px; border-radius: 6px; display: flex; align-items: center; justify-content: center; padding: 0 10px; font-weight: bold; font-size: 0.88rem; cursor: pointer; user-select: none; box-shadow: 0 2px 4px rgba(0,0,0,0.25); border-top: 1px solid rgba(255,255,255,0.4); border-bottom: 1px solid rgba(0,0,0,0.3); }
 
     .obi-branca { background: #fdfdfd; color: #111; border: 1px solid #ccc; }
     .obi-cinza { background: #88929e; color: #fff; text-shadow: 1px 1px 2px #000; }
@@ -213,8 +323,8 @@
 
     .ukemi-interactive-image {
       position: relative;
-      background: #171d26;
-      border: 2px solid #3d495a;
+      background: #0f141c;
+      border: 2px solid #dcdde1;
       border-radius: 12px;
       overflow: hidden;
       width: 100%;
@@ -263,9 +373,9 @@
     }
 
     .ukemi-hotspot.selected {
-      border: 3px solid var(--neon-select) !important;
-      background: rgba(0, 229, 255, 0.25) !important;
-      box-shadow: inset 0 0 16px rgba(0, 229, 255, 0.8);
+      border: 3px solid var(--japan-red) !important;
+      background: rgba(192, 57, 43, 0.25) !important;
+      box-shadow: inset 0 0 16px rgba(192, 57, 43, 0.7);
     }
 
     .ukemi-hotspot.selected::after {
@@ -293,9 +403,9 @@
     }
 
     .ukemi-name-btn {
-      background: #2c3e50;
-      border: 2px solid #3d495a;
-      color: white;
+      background: #ffffff;
+      border: 2px solid #dcdde1;
+      color: var(--text);
       padding: 10px;
       border-radius: 10px;
       font-weight: bold;
@@ -306,12 +416,14 @@
       align-items: center;
       justify-content: center;
       user-select: none;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      transition: all 0.2s;
     }
 
     .ukemi-name-btn.selected { 
-      border-color: var(--neon-select); 
-      background: #1b3d4f; 
-      color: #00e5ff;
+      border-color: var(--japan-red); 
+      background: #fff5f5; 
+      color: var(--japan-red);
     }
 
     .ukemi-name-btn.matched { 
@@ -339,7 +451,7 @@
     <div class="top-bar" id="topBar" style="display:none;">
       <button class="btn-back" id="btnHome" onclick="showMenu()">⛩ Início</button>
       <div class="status-text" id="phaseIndicator">Dojo Quest</div>
-      <button class="btn-back" id="btnBgmToggle" onclick="toggleBgm()">🎵 Música: Ligado</button>
+      <button class="btn-back" id="btnBgmToggle" onclick="toggleBgm()">🎵 Som: Ligado</button>
     </div>
 
     <!-- TELA DE ENTRADA -->
@@ -366,7 +478,7 @@
         </div>
         <div class="mod-card" onclick="openModule('sentar')">
           <h3>🧘 4. Formas de Sentar</h3>
-          <p>Seiza, Agura, Kyōshi-no-kamae e Anzai</p>
+          <p>Seiza, Agura, Kyōshi-no-kamae e Anza</p>
         </div>
         <div class="mod-card" onclick="openModule('faixavideo')">
           <h3>🥋 5. Como amarrar a faixa</h3>
@@ -449,10 +561,10 @@
         <em>Dica no celular:</em> toque na faixa para subir ou descer!
       </p>
       
-      <div style="font-weight:bold; margin-bottom: 6px; color:var(--gold);">🥋 Ordem da Graduação (Topo para Base):</div>
+      <div style="font-weight:bold; margin-bottom: 6px; color:var(--japan-red);">🥋 Ordem da Graduação (Topo para Base):</div>
       <div class="belts-stack" id="beltDropTarget" ondragover="allowDrop(event)" ondrop="handleDrop(event)"></div>
 
-      <div style="font-weight:bold; margin: 12px 0 6px 0;">Faixas Disponíveis (Toque para colocar na pilha):</div>
+      <div style="font-weight:bold; margin: 12px 0 6px 0; color:var(--text);">Faixas Disponíveis (Toque para colocar na pilha):</div>
       <div class="belts-source-grid" id="beltSource" ondragover="allowDrop(event)" ondrop="handleDrop(event)"></div>
 
       <button class="btn-action" onclick="checkBeltOrder()">Verificar Ordem</button>
@@ -472,7 +584,7 @@
       </div>
 
       <div id="countQuizPanel" style="display:none; text-align:center;">
-        <p style="margin-bottom: 12px;">Clique no alto-falante, escute com atenção e escolha o número correspondente:</p>
+        <p style="margin-bottom: 12px; color:var(--text);">Clique no alto-falante, escute com atenção e escolha o número correspondente:</p>
         <button class="btn-action" style="max-width:220px; margin: 0 auto 16px auto;" onclick="playCurrentCountAudio()">🔊 Ouvir Número</button>
         <div class="quiz-options" id="countQuizOptions"></div>
         <div class="feedback" id="countFeedback"></div>
@@ -510,7 +622,7 @@
         bgmIniciou = true;
         const btn = document.getElementById('btnBgmToggle');
         if (btn) {
-          btn.textContent = "🎵 Música: Ligado";
+          btn.textContent = "🎵 Som: Ligado";
           btn.style.color = "var(--green)";
         }
       }).catch(err => console.log("Erro de autoplay:", err));
@@ -524,12 +636,12 @@
       const btn = document.getElementById('btnBgmToggle');
       if (bgmPlayer.paused) {
         bgmPlayer.play().then(() => {
-          btn.textContent = "🎵 Música: Ligado";
+          btn.textContent = "🎵 Som: Ligado";
           btn.style.color = "var(--green)";
-        }).catch(err => console.log("Aguardando permissão para tocar Música."));
+        }).catch(err => console.log("Aguardando permissão para tocar som."));
       } else {
         bgmPlayer.pause();
-        btn.textContent = "🔇 Música: Desligado";
+        btn.textContent = "🔇 Som: Desligado";
         btn.style.color = "var(--red)";
       }
     }
@@ -561,7 +673,7 @@
         { q: "Em qual ano e país o Judô foi fundado?", options: ["1882 no Japão", "1900 na China", "1850 na Coreia", "1920 no Japão"], ans: "1882 no Japão", tip: "Foi fundado no templo Eisho-ji / Instituto Kodokan em Tóquio no ano de 1882." },
         { q: "Por que o Judô foi criado por Jigoro Kano?", options: ["Para educar, formar cidadãos melhores e unir corpo e mente", "Apenas para vencer brigas de rua", "Para formar soldados imbatíveis", "Para substituir as outras artes marciais"], ans: "Para educar, formar cidadãos melhores e unir corpo e mente", tip: "O lema 'Jita Kyoei' prega o progresso individual para o benefício de todos." },
         { q: "Qual pontuação encerra o combate de imediato (ponto perfeito)?", options: ["Ippon", "Waza-ri", "Shido", "Hansoku-make"], ans: "Ippon", tip: "O Ippon exige projeção veloz com costas completas no solo, ou 20 segundos de imobilização." },
-        { q: "Quantos Waza-ri são necessários para finalizar a luta?", options: ["2 Waza-ri", "3 Waza-ri", "1 Waza-ri", "4 Waza-ri"], ans: "2 Waza-ri", tip: "Dois Waza-ri somam um Ippon completo!" },
+        { q: "Quantos Waza-ri são necessários para finalizar a luta?", options: ["2 Waza-ri (Waza-ri Awasete Ippon)", "3 Waza-ri", "1 Waza-ri", "4 Waza-ri"], ans: "2 Waza-ri (Waza-ri Awasete Ippon)", tip: "Dois Waza-ri somam um Ippon completo!" },
         { q: "Quantos Shidos (faltas) causam a desclassificação por Hansoku-make?", options: ["3 Shidos", "2 Shidos", "1 Shido", "5 Shidos"], ans: "3 Shidos", tip: "Ao acumular 3 Shidos, o atleta recebe Hansoku-make e a vitória vai para o oponente." },
         { q: "Qual destas atitudes NÃO é permitida e causa advertência (Shido)?", options: ["Sair da área ou evitar a pegada propositalmente", "Aplicar um golpe perfeito de costas", "Amarrar a faixa quando o árbitro autoriza", "Fazer a reverência com respeito"], ans: "Sair da área ou evitar a pegada propositalmente", tip: "Passividade e fuga da área de luta são faltas clássicas de Shido." }
       ],
@@ -571,29 +683,29 @@
           q: "Identifique esta postura formal sentada sobre os joelhos:", 
           img: "imagens/seiza.png", 
           ans: "Seiza", 
-          options: ["Seiza", "Agura", "Kyōshi-no-kamae", "Anzai"], 
+          options: ["Seiza", "Agura", "Kyōshi-no-kamae", "Anza"], 
           tip: "Seiza é a postura formal ajoelhada com a coluna ereta e mãos sobre as coxas." 
         },
         { 
           q: "Identifique esta forma confortável de sentar com pernas cruzadas:", 
           img: "imagens/agura.png", 
           ans: "Agura", 
-          options: ["Agura", "Seiza", "Kyōshi-no-kamae", "Anzai"], 
+          options: ["Agura", "Seiza", "Kyōshi-no-kamae", "Anza"], 
           tip: "Agura é a forma comum de sentar de pernas cruzadas à frente." 
         },
         { 
           q: "Identifique esta postura de guarda com um joelho levantado:", 
           img: "imagens/kyoshi-no-kamae.jpg", 
           ans: "Kyōshi-no-kamae", 
-          options: ["Kyōshi-no-kamae", "Seiza", "Agura", "Anzai"], 
+          options: ["Kyōshi-no-kamae", "Seiza", "Agura", "Anza"], 
           tip: "Kyōshi-no-kamae é a postura com um joelho no chão e outro erguido para pronto combate." 
         },
         { 
           q: "Identifique esta postura tradicional sentado com postura ereta:", 
-          img: "imagens/tate-hiza.jpg", 
-          ans: "Anzai", 
-          options: ["Anzai", "Seiza", "Agura", "Kyōshi-no-kamae"], 
-          tip: "Anzai é a postura sentada de repouso com as pernas recolhidas e coluna alinhada." 
+          img: "imagens/Anzai.jpg", 
+          ans: "Anza", 
+          options: ["Anza", "Seiza", "Agura", "Kyōshi-no-kamae"], 
+          tip: "Anza é a postura sentada de repouso com as pernas recolhidas e coluna alinhada." 
         }
       ],
 
@@ -720,7 +832,7 @@
       optsBox.innerHTML = '';
 
       if (item.term) {
-        qTitle.innerHTML = `${item.q} <br><strong style="font-size:1.6rem; color:var(--gold); display:block; margin-top:8px;">${item.term}</strong>`;
+        qTitle.innerHTML = `${item.q} <br><strong style="font-size:1.6rem; color:var(--japan-red); display:block; margin-top:8px;">${item.term}</strong>`;
       } else {
         qTitle.textContent = item.q;
       }
@@ -796,7 +908,7 @@
         document.getElementById('quizOptions').innerHTML = '';
         document.getElementById('quizFeedback').textContent = "Excelente! Você concluiu todas as etapas deste treino.";
         document.getElementById('quizFeedback').className = 'feedback show';
-        document.getElementById('quizFeedback').style.color = 'var(--gold)';
+        document.getElementById('quizFeedback').style.color = 'var(--japan-red)';
         document.getElementById('btnNextQuiz').style.display = 'none';
       }
     }
@@ -884,7 +996,7 @@
 
         if (matchedCount === ukemiPairs.length) {
           fb.textContent = "🏆 Parabéns! Você dominou todas as 4 quedas fundamentais do Judô!";
-          fb.style.color = 'var(--gold)';
+          fb.style.color = 'var(--japan-red)';
           document.getElementById('btnResetUkemi').style.display = 'block';
         }
       } else {
