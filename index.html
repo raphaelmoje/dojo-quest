@@ -594,15 +594,22 @@
   </div>
 
   <script>
-    // Áudio dos golpes, termos e números
-    const audioPlayer = new Audio();
+    // Áudio otimizado com pré-carregamento para resposta instantânea
+    const audioCache = {};
+
     function playLocalAudio(audioKey) {
       if (!audioKey) return;
-      audioPlayer.pause();
-      audioPlayer.currentTime = 0;
-      audioPlayer.src = `audios/${audioKey}.mp3`;
-      audioPlayer.playbackRate = 0.85;
-      audioPlayer.play().catch(e => console.log("Áudio pendente:", audioKey));
+      
+      // Cria o cache do áudio na primeira execução para tocar sem delay nos cliques seguintes
+      if (!audioCache[audioKey]) {
+        audioCache[audioKey] = new Audio(`audios/${audioKey}.mp3`);
+        audioCache[audioKey].playbackRate = 0.85;
+      }
+
+      const sound = audioCache[audioKey];
+      sound.pause();
+      sound.currentTime = 0;
+      sound.play().catch(e => console.log("Áudio pendente:", audioKey));
     }
 
     // Trilha sonora de fundo
